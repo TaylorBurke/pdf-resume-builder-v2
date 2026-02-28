@@ -1,0 +1,46 @@
+import { renderToStaticMarkup } from 'react-dom/server'
+import { createElement } from 'react'
+import { TEMPLATES, type TemplateId } from '@/templates'
+import type { ResumeContent, PersonalInfo } from '@/types'
+
+/**
+ * Render a resume to a self-contained HTML document suitable for
+ * Puppeteer PDF conversion or direct browser preview.
+ */
+export function renderResumeToHtml(
+  resume: ResumeContent,
+  personalInfo: PersonalInfo,
+  templateId: TemplateId
+): string {
+  const template = TEMPLATES[templateId]
+  if (!template) {
+    throw new Error(`Unknown template: ${templateId}`)
+  }
+
+  const markup = renderToStaticMarkup(
+    createElement(template.component, { resume, personalInfo })
+  )
+
+  return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Resume - ${personalInfo.fullName}</title>
+  <style>
+    @page { size: letter; margin: 0; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+  </style>
+</head>
+<body>${markup}</body>
+</html>`
+}
