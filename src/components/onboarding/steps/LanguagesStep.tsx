@@ -55,23 +55,23 @@ export default function LanguagesStep({ onSubmit, onSkip, onBack, initialData }:
     >
       <div className="space-y-4">
         {entries.map((entry, idx) => (
-          <div key={idx} className="flex items-end gap-4 p-4 border border-gray-200 rounded-lg">
+          <div key={idx} className="flex items-end gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Language</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Language</label>
               <input
                 type="text"
                 value={entry.language}
                 onChange={(e) => updateEntry(idx, 'language', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
                 placeholder="English"
               />
             </div>
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Proficiency</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Proficiency</label>
               <select
                 value={entry.proficiency}
                 onChange={(e) => updateEntry(idx, 'proficiency', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 bg-white dark:bg-gray-800 dark:text-gray-100"
               >
                 {PROFICIENCY_OPTIONS.map((p) => (
                   <option key={p} value={p}>
@@ -81,7 +81,7 @@ export default function LanguagesStep({ onSubmit, onSkip, onBack, initialData }:
               </select>
             </div>
             {entries.length > 1 && (
-              <button type="button" onClick={() => removeEntry(idx)} className="text-sm text-red-500 hover:text-red-700 pb-2">
+              <button type="button" onClick={() => removeEntry(idx)} className="text-sm text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 pb-2">
                 Remove
               </button>
             )}
@@ -91,7 +91,7 @@ export default function LanguagesStep({ onSubmit, onSkip, onBack, initialData }:
         <button
           type="button"
           onClick={addEntry}
-          className="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-blue-400 hover:text-blue-600"
+          className="w-full py-2 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-500 dark:text-gray-400 hover:border-blue-400 dark:hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400"
         >
           + Add Language
         </button>

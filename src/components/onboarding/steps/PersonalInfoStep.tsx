@@ -45,7 +45,7 @@ export default function PersonalInfoStep({ onSubmit, onSkip, onBack, initialData
     >
       <div className="space-y-4">
         <div>
-          <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Full Name *
           </label>
           <input
@@ -54,13 +54,13 @@ export default function PersonalInfoStep({ onSubmit, onSkip, onBack, initialData
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
             placeholder="John Doe"
           />
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Email *
           </label>
           <input
@@ -69,13 +69,13 @@ export default function PersonalInfoStep({ onSubmit, onSkip, onBack, initialData
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
             placeholder="john@example.com"
           />
         </div>
 
         <div>
-          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Phone
           </label>
           <input
@@ -83,13 +83,13 @@ export default function PersonalInfoStep({ onSubmit, onSkip, onBack, initialData
             type="tel"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
             placeholder="+1 (555) 123-4567"
           />
         </div>
 
         <div>
-          <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="location" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Location
           </label>
           <input
@@ -97,13 +97,13 @@ export default function PersonalInfoStep({ onSubmit, onSkip, onBack, initialData
             type="text"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
             placeholder="San Francisco, CA"
           />
         </div>
 
         <div>
-          <label htmlFor="linkedinUrl" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="linkedinUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             LinkedIn URL
           </label>
           <input
@@ -111,13 +111,13 @@ export default function PersonalInfoStep({ onSubmit, onSkip, onBack, initialData
             type="url"
             value={linkedinUrl}
             onChange={(e) => setLinkedinUrl(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
             placeholder="https://linkedin.com/in/johndoe"
           />
         </div>
 
         <div>
-          <label htmlFor="githubUrl" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="githubUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             GitHub URL
           </label>
           <input
@@ -125,13 +125,13 @@ export default function PersonalInfoStep({ onSubmit, onSkip, onBack, initialData
             type="url"
             value={githubUrl}
             onChange={(e) => setGithubUrl(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
             placeholder="https://github.com/johndoe"
           />
         </div>
 
         <div>
-          <label htmlFor="portfolioUrl" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="portfolioUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Portfolio URL
           </label>
           <input
@@ -139,13 +139,13 @@ export default function PersonalInfoStep({ onSubmit, onSkip, onBack, initialData
             type="url"
             value={portfolioUrl}
             onChange={(e) => setPortfolioUrl(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
             placeholder="https://portfolio.example.com"
           />
         </div>
 
         <div>
-          <label htmlFor="websiteUrl" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="websiteUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Website URL
           </label>
           <input
@@ -153,7 +153,7 @@ export default function PersonalInfoStep({ onSubmit, onSkip, onBack, initialData
             type="url"
             value={websiteUrl}
             onChange={(e) => setWebsiteUrl(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
             placeholder="https://johndoe.com"
           />
         </div>

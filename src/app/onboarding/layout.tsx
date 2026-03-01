@@ -12,7 +12,7 @@ export default async function OnboardingLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-start justify-center px-4 py-12">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-start justify-center px-4 py-12">
       <div className="w-full max-w-2xl">{children}</div>
     </div>
   )

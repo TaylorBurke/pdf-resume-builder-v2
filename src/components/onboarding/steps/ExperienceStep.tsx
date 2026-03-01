@@ -78,14 +78,14 @@ export default function ExperienceStep({ onSubmit, onSkip, onBack, initialData }
     >
       <div className="space-y-6">
         {entries.map((entry, idx) => (
-          <div key={idx} className="p-4 border border-gray-200 rounded-lg space-y-4">
+          <div key={idx} className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-medium text-gray-700">Position {idx + 1}</h3>
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Position {idx + 1}</h3>
               {entries.length > 1 && (
                 <button
                   type="button"
                   onClick={() => removeEntry(idx)}
-                  className="text-sm text-red-500 hover:text-red-700"
+                  className="text-sm text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                 >
                   Remove
                 </button>
@@ -94,22 +94,22 @@ export default function ExperienceStep({ onSubmit, onSkip, onBack, initialData }
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Company</label>
                 <input
                   type="text"
                   value={entry.company}
                   onChange={(e) => updateEntry(idx, 'company', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
                   placeholder="Acme Corp"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title</label>
                 <input
                   type="text"
                   value={entry.title}
                   onChange={(e) => updateEntry(idx, 'title', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
                   placeholder="Software Engineer"
                 />
               </div>
@@ -117,23 +117,23 @@ export default function ExperienceStep({ onSubmit, onSkip, onBack, initialData }
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Start Date</label>
                 <input
                   type="text"
                   value={entry.startDate}
                   onChange={(e) => updateEntry(idx, 'startDate', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
                   placeholder="Jan 2022"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">End Date</label>
                 <input
                   type="text"
                   value={entry.current ? '' : (entry.endDate ?? '')}
                   onChange={(e) => updateEntry(idx, 'endDate', e.target.value)}
                   disabled={entry.current}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100 disabled:bg-gray-100 dark:disabled:bg-gray-700"
                   placeholder="Dec 2023"
                 />
               </div>
@@ -147,38 +147,38 @@ export default function ExperienceStep({ onSubmit, onSkip, onBack, initialData }
                 onChange={(e) => updateEntry(idx, 'current', e.target.checked)}
                 className="h-4 w-4 text-blue-600 rounded border-gray-300"
               />
-              <label htmlFor={`current-${idx}`} className="text-sm text-gray-700">
+              <label htmlFor={`current-${idx}`} className="text-sm text-gray-700 dark:text-gray-300">
                 I currently work here
               </label>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Location</label>
               <input
                 type="text"
                 value={entry.location ?? ''}
                 onChange={(e) => updateEntry(idx, 'location', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
                 placeholder="San Francisco, CA"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Key Achievements / Bullets</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Key Achievements / Bullets</label>
               {entry.bullets.map((bullet, bIdx) => (
                 <div key={bIdx} className="flex items-center gap-2 mb-2">
                   <input
                     type="text"
                     value={bullet}
                     onChange={(e) => updateBullet(idx, bIdx, e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
                     placeholder="Led migration to microservices..."
                   />
                   {entry.bullets.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeBullet(idx, bIdx)}
-                      className="text-sm text-red-500 hover:text-red-700"
+                      className="text-sm text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                     >
                       Remove
                     </button>
@@ -188,7 +188,7 @@ export default function ExperienceStep({ onSubmit, onSkip, onBack, initialData }
               <button
                 type="button"
                 onClick={() => addBullet(idx)}
-                className="text-sm text-blue-600 hover:text-blue-800"
+                className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
               >
                 + Add Bullet
               </button>
@@ -199,7 +199,7 @@ export default function ExperienceStep({ onSubmit, onSkip, onBack, initialData }
         <button
           type="button"
           onClick={addEntry}
-          className="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-blue-400 hover:text-blue-600"
+          className="w-full py-2 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-500 dark:text-gray-400 hover:border-blue-400 dark:hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400"
         >
           + Add Experience
         </button>

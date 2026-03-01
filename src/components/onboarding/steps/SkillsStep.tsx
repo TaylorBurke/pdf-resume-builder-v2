@@ -56,34 +56,34 @@ export default function SkillsStep({ onSubmit, onSkip, onBack, initialData }: Sk
     >
       <div className="space-y-6">
         {categories.map((cat, idx) => (
-          <div key={idx} className="p-4 border border-gray-200 rounded-lg space-y-4">
+          <div key={idx} className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-medium text-gray-700">Category {idx + 1}</h3>
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Category {idx + 1}</h3>
               {categories.length > 1 && (
-                <button type="button" onClick={() => removeCategory(idx)} className="text-sm text-red-500 hover:text-red-700">
+                <button type="button" onClick={() => removeCategory(idx)} className="text-sm text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">
                   Remove
                 </button>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Category Name</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category Name</label>
               <input
                 type="text"
                 value={cat.name}
                 onChange={(e) => updateCategory(idx, 'name', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
                 placeholder="Programming Languages"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Skills (comma-separated)</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Skills (comma-separated)</label>
               <input
                 type="text"
                 value={cat.itemsText}
                 onChange={(e) => updateCategory(idx, 'itemsText', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
                 placeholder="JavaScript, TypeScript, Python, Go"
               />
             </div>
@@ -93,7 +93,7 @@ export default function SkillsStep({ onSubmit, onSkip, onBack, initialData }: Sk
         <button
           type="button"
           onClick={addCategory}
-          className="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-blue-400 hover:text-blue-600"
+          className="w-full py-2 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-500 dark:text-gray-400 hover:border-blue-400 dark:hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400"
         >
           + Add Category
         </button>

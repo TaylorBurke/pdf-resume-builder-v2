@@ -55,11 +55,11 @@ export default function VolunteerStep({ onSubmit, onSkip, onBack, initialData }:
     >
       <div className="space-y-6">
         {entries.map((entry, idx) => (
-          <div key={idx} className="p-4 border border-gray-200 rounded-lg space-y-4">
+          <div key={idx} className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-medium text-gray-700">Volunteer {idx + 1}</h3>
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Volunteer {idx + 1}</h3>
               {entries.length > 1 && (
-                <button type="button" onClick={() => removeEntry(idx)} className="text-sm text-red-500 hover:text-red-700">
+                <button type="button" onClick={() => removeEntry(idx)} className="text-sm text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">
                   Remove
                 </button>
               )}
@@ -67,22 +67,22 @@ export default function VolunteerStep({ onSubmit, onSkip, onBack, initialData }:
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Organization</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Organization</label>
                 <input
                   type="text"
                   value={entry.organization}
                   onChange={(e) => updateEntry(idx, 'organization', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
                   placeholder="Red Cross"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Role</label>
                 <input
                   type="text"
                   value={entry.role}
                   onChange={(e) => updateEntry(idx, 'role', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
                   placeholder="Volunteer Coordinator"
                 />
               </div>
@@ -90,34 +90,34 @@ export default function VolunteerStep({ onSubmit, onSkip, onBack, initialData }:
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Start Date</label>
                 <input
                   type="text"
                   value={entry.startDate ?? ''}
                   onChange={(e) => updateEntry(idx, 'startDate', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
                   placeholder="Jun 2021"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">End Date</label>
                 <input
                   type="text"
                   value={entry.endDate ?? ''}
                   onChange={(e) => updateEntry(idx, 'endDate', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
                   placeholder="Present"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
               <textarea
                 value={entry.description}
                 onChange={(e) => updateEntry(idx, 'description', e.target.value)}
                 rows={2}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100 resize-y"
                 placeholder="Organized community events..."
               />
             </div>
@@ -127,7 +127,7 @@ export default function VolunteerStep({ onSubmit, onSkip, onBack, initialData }:
         <button
           type="button"
           onClick={addEntry}
-          className="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-blue-400 hover:text-blue-600"
+          className="w-full py-2 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-500 dark:text-gray-400 hover:border-blue-400 dark:hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400"
         >
           + Add Volunteer Experience
         </button>

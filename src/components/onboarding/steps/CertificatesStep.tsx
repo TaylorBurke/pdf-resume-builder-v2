@@ -55,11 +55,11 @@ export default function CertificatesStep({ onSubmit, onSkip, onBack, initialData
     >
       <div className="space-y-6">
         {entries.map((entry, idx) => (
-          <div key={idx} className="p-4 border border-gray-200 rounded-lg space-y-4">
+          <div key={idx} className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-medium text-gray-700">Certificate {idx + 1}</h3>
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Certificate {idx + 1}</h3>
               {entries.length > 1 && (
-                <button type="button" onClick={() => removeEntry(idx)} className="text-sm text-red-500 hover:text-red-700">
+                <button type="button" onClick={() => removeEntry(idx)} className="text-sm text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">
                   Remove
                 </button>
               )}
@@ -67,22 +67,22 @@ export default function CertificatesStep({ onSubmit, onSkip, onBack, initialData
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Certificate Name</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Certificate Name</label>
                 <input
                   type="text"
                   value={entry.name}
                   onChange={(e) => updateEntry(idx, 'name', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
                   placeholder="AWS Solutions Architect"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Issuer</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Issuer</label>
                 <input
                   type="text"
                   value={entry.issuer}
                   onChange={(e) => updateEntry(idx, 'issuer', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
                   placeholder="Amazon Web Services"
                 />
               </div>
@@ -90,34 +90,34 @@ export default function CertificatesStep({ onSubmit, onSkip, onBack, initialData
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Date</label>
                 <input
                   type="text"
                   value={entry.date ?? ''}
                   onChange={(e) => updateEntry(idx, 'date', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
                   placeholder="Jan 2023"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Credential ID</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Credential ID</label>
                 <input
                   type="text"
                   value={entry.credentialId ?? ''}
                   onChange={(e) => updateEntry(idx, 'credentialId', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
                   placeholder="ABC123XYZ"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">URL</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">URL</label>
               <input
                 type="url"
                 value={entry.url ?? ''}
                 onChange={(e) => updateEntry(idx, 'url', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
                 placeholder="https://credential.example.com/verify"
               />
             </div>
@@ -127,7 +127,7 @@ export default function CertificatesStep({ onSubmit, onSkip, onBack, initialData
         <button
           type="button"
           onClick={addEntry}
-          className="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-blue-400 hover:text-blue-600"
+          className="w-full py-2 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-500 dark:text-gray-400 hover:border-blue-400 dark:hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400"
         >
           + Add Certificate
         </button>
