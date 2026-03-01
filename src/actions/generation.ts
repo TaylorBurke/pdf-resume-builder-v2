@@ -146,6 +146,16 @@ export async function updateResumeTemplate(resumeId: string, templateId: string)
     .where(eq(resumes.id, resumeId))
 }
 
+export async function updateResumeContent(resumeId: string, resumeContent: ResumeContent) {
+  const session = await auth()
+  if (!session?.user?.id) throw new Error('Not authenticated')
+  await db
+    .update(resumes)
+    .set({ resumeContent: JSON.stringify(resumeContent), updatedAt: new Date().toISOString() })
+    .where(and(eq(resumes.id, resumeId), eq(resumes.userId, session.user.id)))
+  return { resumeContent }
+}
+
 export async function getResume(resumeId: string) {
   const session = await auth()
   if (!session?.user?.id) throw new Error('Not authenticated')
