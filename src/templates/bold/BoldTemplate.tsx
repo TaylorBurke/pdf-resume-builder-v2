@@ -1,5 +1,6 @@
 import React from 'react'
 import type { ResumeContent, PersonalInfo } from '@/types'
+import { formatDisplayUrl } from '@/lib/url'
 
 export interface TemplateProps {
   resume: ResumeContent
@@ -92,6 +93,10 @@ const s = {
     color: colors.sidebarMuted,
     display: 'block' as const,
     marginBottom: 1,
+  },
+  contactLink: {
+    color: colors.accent,
+    textDecoration: 'none',
   },
   skillGroup: {
     marginBottom: spacing.md,
@@ -332,7 +337,7 @@ export function BoldTemplate({ resume, personalInfo }: TemplateProps) {
           {personalInfo.email && (
             <div style={s.contactItem}>
               <span style={s.contactLabel}>Email</span>
-              {personalInfo.email}
+              <a href={`mailto:${personalInfo.email}`} style={s.contactLink}>{personalInfo.email}</a>
             </div>
           )}
           {personalInfo.phone && (
@@ -350,25 +355,25 @@ export function BoldTemplate({ resume, personalInfo }: TemplateProps) {
           {personalInfo.linkedinUrl && (
             <div style={s.contactItem}>
               <span style={s.contactLabel}>LinkedIn</span>
-              {personalInfo.linkedinUrl}
+              <a href={personalInfo.linkedinUrl} style={s.contactLink}>{formatDisplayUrl(personalInfo.linkedinUrl)}</a>
             </div>
           )}
           {personalInfo.githubUrl && (
             <div style={s.contactItem}>
               <span style={s.contactLabel}>GitHub</span>
-              {personalInfo.githubUrl}
+              <a href={personalInfo.githubUrl} style={s.contactLink}>{formatDisplayUrl(personalInfo.githubUrl)}</a>
             </div>
           )}
           {personalInfo.portfolioUrl && (
             <div style={s.contactItem}>
               <span style={s.contactLabel}>Portfolio</span>
-              {personalInfo.portfolioUrl}
+              <a href={personalInfo.portfolioUrl} style={s.contactLink}>{formatDisplayUrl(personalInfo.portfolioUrl)}</a>
             </div>
           )}
           {personalInfo.websiteUrl && (
             <div style={s.contactItem}>
               <span style={s.contactLabel}>Website</span>
-              {personalInfo.websiteUrl}
+              <a href={personalInfo.websiteUrl} style={s.contactLink}>{formatDisplayUrl(personalInfo.websiteUrl)}</a>
             </div>
           )}
         </div>
