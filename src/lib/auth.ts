@@ -9,16 +9,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   basePath: '/api/auth',
   adapter: DrizzleAdapter(db, {
     usersTable: schema.users,
-    accountsTable: schema.accounts,
+    accountsTable: schema.accounts as any,
     sessionsTable: schema.sessions,
     verificationTokensTable: schema.verificationTokens,
-  } as any),
+  }),
   providers: [
     Google({ allowDangerousEmailAccountLinking: true }),
     GitHub({ allowDangerousEmailAccountLinking: true }),
   ],
   pages: {
     signIn: '/login',
+    error: '/login',
   },
   callbacks: {
     session({ session, user }) {
@@ -28,4 +29,5 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session
     },
   },
+  debug: true,
 })
