@@ -3,10 +3,20 @@ import Google from 'next-auth/providers/google'
 import GitHub from 'next-auth/providers/github'
 import { DrizzleAdapter } from '@auth/drizzle-adapter'
 import { db } from './db/client'
+import * as schema from './db/schema'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: DrizzleAdapter(db),
-  providers: [Google, GitHub],
+  basePath: '/api/auth',
+  adapter: DrizzleAdapter(db, {
+    usersTable: schema.users,
+    accountsTable: schema.accounts,
+    sessionsTable: schema.sessions,
+    verificationTokensTable: schema.verificationTokens,
+  } as any),
+  providers: [
+    Google({ allowDangerousEmailAccountLinking: true }),
+    GitHub({ allowDangerousEmailAccountLinking: true }),
+  ],
   pages: {
     signIn: '/login',
   },

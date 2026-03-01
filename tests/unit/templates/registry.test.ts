@@ -39,9 +39,9 @@ describe('Template Registry', () => {
 })
 
 describe('renderResumeToHtml', () => {
-  it('generates valid HTML for each template', () => {
+  it('generates valid HTML for each template', async () => {
     for (const templateId of Object.keys(TEMPLATES) as TemplateId[]) {
-      const html = renderResumeToHtml(mockResume, mockPersonalInfo, templateId)
+      const html = await renderResumeToHtml(mockResume, mockPersonalInfo, templateId)
       expect(html).toContain('<!DOCTYPE html>')
       expect(html).toContain('<html>')
       expect(html).toContain('Test User')
@@ -50,19 +50,19 @@ describe('renderResumeToHtml', () => {
     }
   })
 
-  it('includes print-color-adjust for background colors', () => {
-    const html = renderResumeToHtml(mockResume, mockPersonalInfo, 'clean')
+  it('includes print-color-adjust for background colors', async () => {
+    const html = await renderResumeToHtml(mockResume, mockPersonalInfo, 'clean')
     expect(html).toContain('print-color-adjust: exact')
   })
 
-  it('includes title with user name', () => {
-    const html = renderResumeToHtml(mockResume, mockPersonalInfo, 'clean')
+  it('includes title with user name', async () => {
+    const html = await renderResumeToHtml(mockResume, mockPersonalInfo, 'clean')
     expect(html).toContain('<title>Resume - Test User</title>')
   })
 
-  it('throws for unknown template', () => {
-    expect(() =>
+  it('throws for unknown template', async () => {
+    await expect(
       renderResumeToHtml(mockResume, mockPersonalInfo, 'nonexistent' as TemplateId)
-    ).toThrow('Unknown template: nonexistent')
+    ).rejects.toThrow('Unknown template: nonexistent')
   })
 })

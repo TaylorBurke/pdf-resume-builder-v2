@@ -1,4 +1,3 @@
-import { renderToStaticMarkup } from 'react-dom/server'
 import { createElement } from 'react'
 import { TEMPLATES, type TemplateId } from '@/templates'
 import type { ResumeContent, PersonalInfo } from '@/types'
@@ -7,15 +6,17 @@ import type { ResumeContent, PersonalInfo } from '@/types'
  * Render a resume to a self-contained HTML document suitable for
  * Puppeteer PDF conversion or direct browser preview.
  */
-export function renderResumeToHtml(
+export async function renderResumeToHtml(
   resume: ResumeContent,
   personalInfo: PersonalInfo,
   templateId: TemplateId
-): string {
+): Promise<string> {
   const template = TEMPLATES[templateId]
   if (!template) {
     throw new Error(`Unknown template: ${templateId}`)
   }
+
+  const { renderToStaticMarkup } = await import('react-dom/server')
 
   const markup = renderToStaticMarkup(
     createElement(template.component, { resume, personalInfo })

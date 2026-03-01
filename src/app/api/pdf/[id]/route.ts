@@ -54,7 +54,7 @@ export async function GET(
     const personalInfo: PersonalInfo = JSON.parse(personalInfoSection.data)
     const templateId: TemplateId = (resume.templateId as TemplateId) || 'clean'
 
-    const html = renderResumeToHtml(resumeContent, personalInfo, templateId)
+    const html = await renderResumeToHtml(resumeContent, personalInfo, templateId)
 
     // Return HTML for development / preview
     // Puppeteer PDF conversion will be added for production deployment
