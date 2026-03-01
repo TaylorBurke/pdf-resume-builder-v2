@@ -13,3 +13,16 @@ describe('Dark mode configuration', () => {
     expect(css).not.toContain('prefers-color-scheme')
   })
 })
+
+describe('Root layout', () => {
+  it('layout.tsx imports and renders ThemeProvider', () => {
+    const layout = readFileSync(resolve('src/app/layout.tsx'), 'utf-8')
+    expect(layout).toContain('ThemeProvider')
+  })
+
+  it('layout.tsx has inline theme script for flash prevention', () => {
+    const layout = readFileSync(resolve('src/app/layout.tsx'), 'utf-8')
+    expect(layout).toContain('suppressHydrationWarning')
+    expect(layout).toContain('theme')
+  })
+})
