@@ -9,6 +9,18 @@ interface PagedPreviewProps {
   html: string
 }
 
+/**
+ * Inject a CSS offset into the HTML so page N shows content starting at
+ * N * PAGE_HEIGHT pixels. Uses inline style on <body> which overrides the
+ * stylesheet's `body { margin: 0 }`. This is purely CSS-driven — no JS
+ * scrollTo timing issues.
+ */
+function getPageHtml(baseHtml: string, pageIndex: number): string {
+  if (pageIndex === 0) return baseHtml
+  const offset = pageIndex * PAGE_HEIGHT
+  return baseHtml.replace('<body>', `<body style="margin-top: -${offset}px;">`)
+}
+
 export default function PagedPreview({ html }: PagedPreviewProps) {
   const measureRef = useRef<HTMLIFrameElement>(null)
   const [pageCount, setPageCount] = useState(1)
@@ -19,15 +31,6 @@ export default function PagedPreview({ html }: PagedPreviewProps) {
     const height = iframe.contentDocument.body.scrollHeight
     setPageCount(Math.max(1, Math.ceil(height / PAGE_HEIGHT)))
   }, [])
-
-  function handlePageLoad(e: React.SyntheticEvent<HTMLIFrameElement>, pageIndex: number) {
-    const iframe = e.currentTarget
-    try {
-      iframe.contentWindow?.scrollTo(0, pageIndex * PAGE_HEIGHT)
-    } catch {
-      // cross-origin safety — srcdoc should be same-origin so this shouldn't fire
-    }
-  }
 
   if (!html) {
     return (
@@ -71,8 +74,7 @@ export default function PagedPreview({ html }: PagedPreviewProps) {
             >
               <iframe
                 data-testid={`page-${i + 1}`}
-                srcDoc={html}
-                onLoad={(e) => handlePageLoad(e, i)}
+                srcDoc={getPageHtml(html, i)}
                 scrolling="no"
                 style={{
                   width: PAGE_WIDTH,
