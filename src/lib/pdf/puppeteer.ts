@@ -1,14 +1,17 @@
 import type { Browser } from 'puppeteer-core'
 
+const CHROMIUM_PACK_URL =
+  'https://github.com/Sparticuz/chromium/releases/download/v143.0.0/chromium-v143.0.0-pack.x64.tar'
+
 export async function generatePdf(html: string): Promise<Uint8Array> {
   let browser: Browser
 
   if (process.env.VERCEL) {
-    const chromium = (await import('@sparticuz/chromium')).default
+    const chromium = (await import('@sparticuz/chromium-min')).default
     const puppeteer = (await import('puppeteer-core')).default
     browser = await puppeteer.launch({
       args: chromium.args,
-      executablePath: await chromium.executablePath(),
+      executablePath: await chromium.executablePath(CHROMIUM_PACK_URL),
       headless: 'shell',
     })
   } else {
