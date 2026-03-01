@@ -46,11 +46,17 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
     setModelDisplayName(null)
 
     try {
-      const res = await fetch(`https://openrouter.ai/api/v1/models/${trimmed}`)
-      if (res.ok) {
-        const data = await res.json()
+      const res = await fetch('https://openrouter.ai/api/v1/models')
+      if (!res.ok) {
+        setModelStatus('invalid')
+        setModelMessage('Could not fetch models from OpenRouter.')
+        return
+      }
+      const data = await res.json()
+      const match = data?.data?.find((m: { id: string }) => m.id === trimmed)
+      if (match) {
         setModelStatus('valid')
-        setModelDisplayName(data?.data?.name ?? trimmed)
+        setModelDisplayName(match.name ?? trimmed)
         setModelMessage(null)
       } else {
         setModelStatus('invalid')
