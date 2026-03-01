@@ -24,14 +24,21 @@ interface ResumeViewClientProps {
   personalInfo?: PersonalInfo
 }
 
+function isValidTemplateId(id: string): id is TemplateId {
+  return id in TEMPLATES
+}
+
 export default function ResumeViewClient({ resume, personalInfo }: ResumeViewClientProps) {
   const router = useRouter()
   const [content, setContent] = useState<ResumeContent | null>(resume.resumeContent)
-  const [templateId, setTemplateId] = useState<TemplateId>((resume.templateId as TemplateId) ?? 'clean')
+  const [templateId, setTemplateId] = useState<TemplateId>(
+    resume.templateId && isValidTemplateId(resume.templateId) ? resume.templateId : 'clean'
+  )
   const [isPending, startTransition] = useTransition()
 
   function handleTemplateChange(newTemplateId: string) {
-    setTemplateId(newTemplateId as TemplateId)
+    if (!isValidTemplateId(newTemplateId)) return
+    setTemplateId(newTemplateId)
     startTransition(async () => {
       await updateResumeTemplate(resume.id, newTemplateId)
     })
@@ -44,6 +51,8 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
     })
   }
 
+  const [drawerOpen, setDrawerOpen] = useState(false)
+
   if (!content) {
     return (
       <div className="text-center py-12">
@@ -54,6 +63,36 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
 
   const TemplateComponent = TEMPLATES[templateId].component
 
+  const sidebarContent = (
+    <>
+      <TemplateSelector
+        selectedTemplate={templateId}
+        onSelect={handleTemplateChange}
+      />
+      <div className="border-t border-gray-200 pt-6">
+        <FeedbackForm
+          onSubmit={handleFeedbackSubmit}
+          isLoading={isPending}
+        />
+      </div>
+      {resume.feedbackHistory.length > 0 && (
+        <div className="border-t border-gray-200 pt-6">
+          <h3 className="text-sm font-medium text-gray-700 mb-3">Feedback History</h3>
+          <div className="space-y-2 max-h-60 overflow-y-auto">
+            {resume.feedbackHistory.map((entry, i) => (
+              <div key={i} className="bg-gray-50 rounded-lg p-3">
+                <p className="text-sm text-gray-700">{entry.feedback}</p>
+                <p className="text-xs text-gray-400 mt-1">
+                  {new Date(entry.timestamp).toLocaleString()}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </>
+  )
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -61,44 +100,55 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
           <h1 className="text-2xl font-bold text-gray-900">{resume.jobTitle}</h1>
           <p className="text-gray-600">{resume.company}</p>
         </div>
-        <DownloadButton resumeId={resume.id} />
+        <div className="flex items-center gap-3">
+          <DownloadButton resumeId={resume.id} />
+          <button
+            type="button"
+            onClick={() => setDrawerOpen(true)}
+            className="lg:hidden inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700"
+          >
+            Customize
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Resume Preview */}
         <div className="lg:col-span-2">
           <TemplateComponent resume={content} personalInfo={personalInfo ?? { fullName: '', email: '' }} />
         </div>
 
-        {/* Sidebar */}
-        <div className="space-y-6">
-          <TemplateSelector
-            selectedTemplate={templateId}
-            onSelect={handleTemplateChange}
-          />
+        <div className="hidden lg:block space-y-6">
+          {sidebarContent}
+        </div>
+      </div>
 
-          <div className="border-t border-gray-200 pt-6">
-            <FeedbackForm
-              onSubmit={handleFeedbackSubmit}
-              isLoading={isPending}
-            />
-          </div>
-
-          {resume.feedbackHistory.length > 0 && (
-            <div className="border-t border-gray-200 pt-6">
-              <h3 className="text-sm font-medium text-gray-700 mb-3">Feedback History</h3>
-              <div className="space-y-2 max-h-60 overflow-y-auto">
-                {resume.feedbackHistory.map((entry, i) => (
-                  <div key={i} className="bg-gray-50 rounded-lg p-3">
-                    <p className="text-sm text-gray-700">{entry.feedback}</p>
-                    <p className="text-xs text-gray-400 mt-1">
-                      {new Date(entry.timestamp).toLocaleString()}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+      {drawerOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 z-40 lg:hidden"
+          onClick={() => setDrawerOpen(false)}
+        />
+      )}
+      <div
+        data-testid="controls-drawer"
+        className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
+          drawerOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
+        <div className="flex items-center justify-between p-4 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900">Customize</h2>
+          <button
+            type="button"
+            onClick={() => setDrawerOpen(false)}
+            aria-label="Close"
+            className="p-2 text-gray-400 hover:text-gray-600 rounded-lg"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div className="p-4 space-y-6 overflow-y-auto h-[calc(100%-65px)]">
+          {sidebarContent}
         </div>
       </div>
     </div>

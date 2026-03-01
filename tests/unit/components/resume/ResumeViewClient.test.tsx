@@ -87,11 +87,49 @@ describe('ResumeViewClient', () => {
     // Initially clean
     expect(screen.getByTestId('template-clean')).toBeInTheDocument()
 
-    // Click "Executive" template button
-    await user.click(screen.getByRole('button', { name: /executive/i }))
+    // Click "Executive" template button (rendered in both desktop sidebar and drawer)
+    const executiveButtons = screen.getAllByRole('button', { name: /executive/i })
+    await user.click(executiveButtons[0])
 
     // Should now show executive template
     expect(screen.getByTestId('template-executive')).toBeInTheDocument()
     expect(screen.queryByTestId('template-clean')).not.toBeInTheDocument()
+  })
+
+  describe('Responsive drawer', () => {
+    it('renders a drawer toggle button', () => {
+      render(
+        <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
+      )
+      expect(screen.getByRole('button', { name: /customize/i })).toBeInTheDocument()
+    })
+
+    it('opens drawer when toggle is clicked', async () => {
+      const user = userEvent.setup()
+      render(
+        <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
+      )
+
+      const drawer = screen.getByTestId('controls-drawer')
+      expect(drawer).toHaveClass('translate-x-full')
+
+      await user.click(screen.getByRole('button', { name: /customize/i }))
+
+      expect(drawer).toHaveClass('translate-x-0')
+    })
+
+    it('closes drawer when close button is clicked', async () => {
+      const user = userEvent.setup()
+      render(
+        <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
+      )
+
+      await user.click(screen.getByRole('button', { name: /customize/i }))
+      const drawer = screen.getByTestId('controls-drawer')
+      expect(drawer).toHaveClass('translate-x-0')
+
+      await user.click(screen.getByRole('button', { name: /close/i }))
+      expect(drawer).toHaveClass('translate-x-full')
+    })
   })
 })
