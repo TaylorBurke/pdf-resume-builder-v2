@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
@@ -40,6 +40,26 @@ vi.mock('@/templates', () => ({
   },
 }))
 
+// Mock ResizeObserver which jsdom doesn't provide
+class MockResizeObserver {
+  callback: ResizeObserverCallback
+  constructor(callback: ResizeObserverCallback) {
+    this.callback = callback
+  }
+  observe(target: Element) {
+    this.callback(
+      [{ target, contentRect: {} } as ResizeObserverEntry],
+      this as unknown as ResizeObserver
+    )
+  }
+  unobserve() {}
+  disconnect() {}
+}
+
+beforeEach(() => {
+  vi.stubGlobal('ResizeObserver', MockResizeObserver)
+})
+
 import ResumeViewClient from '@/app/(app)/resume/[id]/client'
 
 const mockResume = {
@@ -65,7 +85,8 @@ describe('ResumeViewClient', () => {
     render(
       <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
     )
-    expect(screen.getByTestId('template-clean')).toBeInTheDocument()
+    // PagedPreview renders children twice (measurement + visible), so use getAllByTestId
+    expect(screen.getAllByTestId('template-clean').length).toBeGreaterThanOrEqual(1)
   })
 
   it('renders the template matching the stored templateId', () => {
@@ -75,7 +96,7 @@ describe('ResumeViewClient', () => {
         personalInfo={mockPersonalInfo}
       />
     )
-    expect(screen.getByTestId('template-bold')).toBeInTheDocument()
+    expect(screen.getAllByTestId('template-bold').length).toBeGreaterThanOrEqual(1)
   })
 
   it('switches template when user clicks a different template button', async () => {
@@ -85,13 +106,13 @@ describe('ResumeViewClient', () => {
     )
 
     // Initially clean
-    expect(screen.getByTestId('template-clean')).toBeInTheDocument()
+    expect(screen.getAllByTestId('template-clean').length).toBeGreaterThanOrEqual(1)
 
     // Click "Executive" template button (in the drawer overlay)
     await user.click(screen.getByRole('button', { name: /executive/i }))
 
     // Should now show executive template
-    expect(screen.getByTestId('template-executive')).toBeInTheDocument()
+    expect(screen.getAllByTestId('template-executive').length).toBeGreaterThanOrEqual(1)
     expect(screen.queryByTestId('template-clean')).not.toBeInTheDocument()
   })
 

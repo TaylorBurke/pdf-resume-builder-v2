@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import PagedPreview from '@/components/resume/PagedPreview'
 import TemplateSelector from '@/components/resume/TemplateSelector'
 import FeedbackForm from '@/components/resume/FeedbackForm'
 import DownloadButton from '@/components/resume/DownloadButton'
@@ -115,7 +116,9 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
         </div>
       </div>
 
-      <TemplateComponent resume={content} personalInfo={personalInfo ?? { fullName: '', email: '' }} />
+      <PagedPreview>
+        <TemplateComponent resume={content} personalInfo={personalInfo ?? { fullName: '', email: '' }} />
+      </PagedPreview>
 
       {drawerOpen && (
         <div
