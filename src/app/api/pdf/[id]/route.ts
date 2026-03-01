@@ -4,6 +4,7 @@ import { auth } from '@/lib/auth'
 import { db } from '@/lib/db/client'
 import { resumes, profileSections } from '@/lib/db/schema'
 import { renderResumeToHtml } from '@/lib/pdf/generator'
+import { generatePdf } from '@/lib/pdf/puppeteer'
 import type { TemplateId } from '@/templates'
 import type { ResumeContent, PersonalInfo } from '@/types'
 
@@ -55,12 +56,14 @@ export async function GET(
     const templateId: TemplateId = (resume.templateId as TemplateId) || 'clean'
 
     const html = await renderResumeToHtml(resumeContent, personalInfo, templateId)
+    const pdfBuffer = await generatePdf(html)
 
-    // Return HTML for development / preview
-    // Puppeteer PDF conversion will be added for production deployment
-    return new Response(html, {
+    const filename = `Resume-${personalInfo.fullName.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`
+
+    return new Response(pdfBuffer as unknown as BodyInit, {
       headers: {
-        'Content-Type': 'text/html; charset=utf-8',
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename="${filename}"`,
       },
     })
   } catch (error) {
