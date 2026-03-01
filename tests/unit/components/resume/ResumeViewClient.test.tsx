@@ -87,16 +87,15 @@ describe('ResumeViewClient', () => {
     // Initially clean
     expect(screen.getByTestId('template-clean')).toBeInTheDocument()
 
-    // Click "Executive" template button (rendered in both desktop sidebar and drawer)
-    const executiveButtons = screen.getAllByRole('button', { name: /executive/i })
-    await user.click(executiveButtons[0])
+    // Click "Executive" template button (in the drawer overlay)
+    await user.click(screen.getByRole('button', { name: /executive/i }))
 
     // Should now show executive template
     expect(screen.getByTestId('template-executive')).toBeInTheDocument()
     expect(screen.queryByTestId('template-clean')).not.toBeInTheDocument()
   })
 
-  describe('Responsive drawer', () => {
+  describe('Overlay drawer', () => {
     it('renders a drawer toggle button', () => {
       render(
         <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />

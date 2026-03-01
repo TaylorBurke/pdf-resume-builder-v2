@@ -100,37 +100,32 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{resume.jobTitle}</h1>
           <p className="text-gray-600 dark:text-gray-400">{resume.company}</p>
         </div>
-        <div className="flex items-center gap-3">
-          <DownloadButton resumeId={resume.id} />
+        <div className="flex items-center gap-2">
+          <DownloadButton resumeId={resume.id} iconOnly />
           <button
             type="button"
             onClick={() => setDrawerOpen(true)}
-            className="lg:hidden inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 shadow-sm transition-colors"
           >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
+            </svg>
             Customize
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
-          <TemplateComponent resume={content} personalInfo={personalInfo ?? { fullName: '', email: '' }} />
-        </div>
-
-        <div className="hidden lg:block space-y-6">
-          {sidebarContent}
-        </div>
-      </div>
+      <TemplateComponent resume={content} personalInfo={personalInfo ?? { fullName: '', email: '' }} />
 
       {drawerOpen && (
         <div
-          className="fixed inset-0 bg-black/30 dark:bg-black/50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/30 dark:bg-black/50 z-40"
           onClick={() => setDrawerOpen(false)}
         />
       )}
       <div
         data-testid="controls-drawer"
-        className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white dark:bg-gray-900 shadow-xl z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
+        className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white dark:bg-gray-900 shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
           drawerOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -148,6 +143,7 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
           </button>
         </div>
         <div className="p-4 space-y-6 overflow-y-auto h-[calc(100%-65px)]">
+          <DownloadButton resumeId={resume.id} />
           {sidebarContent}
         </div>
       </div>
