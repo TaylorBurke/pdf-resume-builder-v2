@@ -1,5 +1,6 @@
 import React from 'react'
 import type { ResumeContent, PersonalInfo } from '@/types'
+import { formatDisplayUrl } from '@/lib/url'
 
 export interface TemplateProps {
   resume: ResumeContent
@@ -76,6 +77,10 @@ const s = {
   headerContactSep: {
     color: 'rgba(255, 255, 255, 0.3)',
     margin: `0 ${spacing.xs}px`,
+  },
+  headerLink: {
+    color: '#e0c068',
+    textDecoration: 'none',
   },
 
   // ── Body / cards ─────────────────────────────────────────────────────
@@ -291,14 +296,14 @@ const s = {
 
 // ── Component ──────────────────────────────────────────────────────────────
 export function ExecutiveTemplate({ resume, personalInfo }: TemplateProps) {
-  const contactItems: string[] = []
-  if (personalInfo.email) contactItems.push(personalInfo.email)
-  if (personalInfo.phone) contactItems.push(personalInfo.phone)
-  if (personalInfo.location) contactItems.push(personalInfo.location)
-  if (personalInfo.linkedinUrl) contactItems.push(personalInfo.linkedinUrl)
-  if (personalInfo.githubUrl) contactItems.push(personalInfo.githubUrl)
-  if (personalInfo.portfolioUrl) contactItems.push(personalInfo.portfolioUrl)
-  if (personalInfo.websiteUrl) contactItems.push(personalInfo.websiteUrl)
+  const contactItems: { text: string; href?: string }[] = []
+  if (personalInfo.email) contactItems.push({ text: personalInfo.email, href: `mailto:${personalInfo.email}` })
+  if (personalInfo.phone) contactItems.push({ text: personalInfo.phone })
+  if (personalInfo.location) contactItems.push({ text: personalInfo.location })
+  if (personalInfo.linkedinUrl) contactItems.push({ text: formatDisplayUrl(personalInfo.linkedinUrl), href: personalInfo.linkedinUrl })
+  if (personalInfo.githubUrl) contactItems.push({ text: formatDisplayUrl(personalInfo.githubUrl), href: personalInfo.githubUrl })
+  if (personalInfo.portfolioUrl) contactItems.push({ text: formatDisplayUrl(personalInfo.portfolioUrl), href: personalInfo.portfolioUrl })
+  if (personalInfo.websiteUrl) contactItems.push({ text: formatDisplayUrl(personalInfo.websiteUrl), href: personalInfo.websiteUrl })
 
   return (
     <div style={s.page}>
@@ -312,7 +317,11 @@ export function ExecutiveTemplate({ resume, personalInfo }: TemplateProps) {
           {contactItems.map((item, i) => (
             <React.Fragment key={i}>
               {i > 0 && <span style={s.headerContactSep}>|</span>}
-              <span>{item}</span>
+              {item.href ? (
+                <a href={item.href} style={s.headerLink}>{item.text}</a>
+              ) : (
+                <span>{item.text}</span>
+              )}
             </React.Fragment>
           ))}
         </div>
