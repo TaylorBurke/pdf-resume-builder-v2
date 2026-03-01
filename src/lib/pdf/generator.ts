@@ -40,6 +40,8 @@ export async function renderResumeToHtml(
       print-color-adjust: exact;
       -webkit-print-color-adjust: exact;
     }
+    section > div, aside > div > div { break-inside: avoid; }
+    h2 { break-after: avoid; }
   </style>
 </head>
 <body>${markup}</body>
