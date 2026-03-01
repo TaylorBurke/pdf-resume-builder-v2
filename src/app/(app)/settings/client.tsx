@@ -107,31 +107,31 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
 
   const modelInputBorder =
     modelStatus === 'valid'
-      ? 'border-green-500 focus:ring-green-500'
+      ? 'border-green-500 focus:ring-green-500 dark:border-green-400 dark:focus:ring-green-400'
       : modelStatus === 'invalid'
-        ? 'border-red-500 focus:ring-red-500'
-        : 'border-gray-300 focus:ring-blue-500'
+        ? 'border-red-500 focus:ring-red-500 dark:border-red-400 dark:focus:ring-red-400'
+        : 'border-gray-300 focus:ring-blue-500 dark:border-gray-600 dark:focus:ring-blue-400'
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">Settings</h1>
-      <p className="text-gray-600 mb-8">
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Settings</h1>
+      <p className="text-gray-600 dark:text-gray-400 mb-8">
         Configure your API key and preferred model for resume generation.
       </p>
 
       <div className="space-y-8">
         {/* API Key Section */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-1">OpenRouter API Key</h2>
-          <p className="text-sm text-gray-500 mb-4">
+        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">OpenRouter API Key</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
             Your API key is used to call AI models via OpenRouter.
           </p>
 
           {hasApiKey && (
             <div className="mb-4 flex items-center gap-2">
-              <span className="text-sm text-gray-600">Current key:</span>
-              <span className="text-sm font-mono text-gray-500">{'••••••••'}</span>
-              <span className="inline-block px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded">
+              <span className="text-sm text-gray-600 dark:text-gray-400">Current key:</span>
+              <span className="text-sm font-mono text-gray-500 dark:text-gray-400">{'••••••••'}</span>
+              <span className="inline-block px-2 py-0.5 bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 text-xs font-medium rounded">
                 Active
               </span>
             </div>
@@ -143,7 +143,7 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
               placeholder={hasApiKey ? 'Enter new key to replace' : 'Enter your OpenRouter API key'}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
               disabled={isPending}
             />
             <button
@@ -157,20 +157,20 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
           </div>
 
           {apiKeyMessage && (
-            <p className="mt-2 text-sm text-green-600">{apiKeyMessage}</p>
+            <p className="mt-2 text-sm text-green-600 dark:text-green-400">{apiKeyMessage}</p>
           )}
         </div>
 
         {/* Model Section */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-1">Preferred Model</h2>
-          <p className="text-sm text-gray-500 mb-4">
+        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">Preferred Model</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
             Choose the AI model for resume generation. Browse available models at{' '}
             <a
               href="https://openrouter.ai/models"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 underline"
+              className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline"
             >
               openrouter.ai/models
             </a>
@@ -184,7 +184,7 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
                 value={model}
                 onChange={(e) => setModel(e.target.value)}
                 placeholder="anthropic/claude-sonnet-4"
-                className={`w-full px-3 py-2 pr-9 border rounded-lg text-sm focus:outline-none focus:ring-2 ${modelInputBorder}`}
+                className={`w-full px-3 py-2 pr-9 border rounded-lg text-sm focus:outline-none focus:ring-2 dark:bg-gray-800 dark:text-gray-100 ${modelInputBorder}`}
                 disabled={isPending}
               />
               {modelStatus === 'validating' && (
@@ -221,10 +221,10 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
           </div>
 
           {modelDisplayName && modelStatus === 'valid' && !modelMessage && (
-            <p className="mt-2 text-sm text-green-600">{modelDisplayName}</p>
+            <p className="mt-2 text-sm text-green-600 dark:text-green-400">{modelDisplayName}</p>
           )}
           {modelMessage && (
-            <p className={`mt-2 text-sm ${modelMessage.includes('successfully') ? 'text-green-600' : 'text-red-600'}`}>
+            <p className={`mt-2 text-sm ${modelMessage.includes('successfully') ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
               {modelMessage}
             </p>
           )}

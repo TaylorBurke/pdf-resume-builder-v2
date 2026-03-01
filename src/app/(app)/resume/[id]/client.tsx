@@ -56,7 +56,7 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
   if (!content) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">This resume has no content yet.</p>
+        <p className="text-gray-500 dark:text-gray-400">This resume has no content yet.</p>
       </div>
     )
   }
@@ -69,20 +69,20 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
         selectedTemplate={templateId}
         onSelect={handleTemplateChange}
       />
-      <div className="border-t border-gray-200 pt-6">
+      <div className="border-t border-gray-200 dark:border-gray-800 pt-6">
         <FeedbackForm
           onSubmit={handleFeedbackSubmit}
           isLoading={isPending}
         />
       </div>
       {resume.feedbackHistory.length > 0 && (
-        <div className="border-t border-gray-200 pt-6">
-          <h3 className="text-sm font-medium text-gray-700 mb-3">Feedback History</h3>
+        <div className="border-t border-gray-200 dark:border-gray-800 pt-6">
+          <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Feedback History</h3>
           <div className="space-y-2 max-h-60 overflow-y-auto">
             {resume.feedbackHistory.map((entry, i) => (
-              <div key={i} className="bg-gray-50 rounded-lg p-3">
-                <p className="text-sm text-gray-700">{entry.feedback}</p>
-                <p className="text-xs text-gray-400 mt-1">
+              <div key={i} className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3">
+                <p className="text-sm text-gray-700 dark:text-gray-300">{entry.feedback}</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                   {new Date(entry.timestamp).toLocaleString()}
                 </p>
               </div>
@@ -97,8 +97,8 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{resume.jobTitle}</h1>
-          <p className="text-gray-600">{resume.company}</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{resume.jobTitle}</h1>
+          <p className="text-gray-600 dark:text-gray-400">{resume.company}</p>
         </div>
         <div className="flex items-center gap-3">
           <DownloadButton resumeId={resume.id} />
@@ -124,23 +124,23 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
 
       {drawerOpen && (
         <div
-          className="fixed inset-0 bg-black/30 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/30 dark:bg-black/50 z-40 lg:hidden"
           onClick={() => setDrawerOpen(false)}
         />
       )}
       <div
         data-testid="controls-drawer"
-        className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
+        className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white dark:bg-gray-900 shadow-xl z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
           drawerOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Customize</h2>
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Customize</h2>
           <button
             type="button"
             onClick={() => setDrawerOpen(false)}
             aria-label="Close"
-            className="p-2 text-gray-400 hover:text-gray-600 rounded-lg"
+            className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 rounded-lg"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

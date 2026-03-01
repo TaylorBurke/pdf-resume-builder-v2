@@ -98,8 +98,8 @@ export default function ProfileClient({ initialSections }: ProfileClientProps) {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">Profile</h1>
-      <p className="text-gray-600 mb-8">
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Profile</h1>
+      <p className="text-gray-600 dark:text-gray-400 mb-8">
         Manage your resume sections. This data is used to generate tailored resumes.
       </p>
 
@@ -111,25 +111,25 @@ export default function ProfileClient({ initialSections }: ProfileClientProps) {
           return (
             <div
               key={sectionType}
-              className="bg-white rounded-lg border border-gray-200"
+              className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800"
             >
               <div className="flex items-center justify-between px-6 py-4">
                 <div>
-                  <h2 className="text-sm font-semibold text-gray-900">
+                  <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                     {SECTION_LABELS[sectionType]}
                   </h2>
                   {!hasData && !isEditing && (
-                    <p className="text-sm text-gray-400 mt-0.5">Not filled in yet</p>
+                    <p className="text-sm text-gray-400 dark:text-gray-500 mt-0.5">Not filled in yet</p>
                   )}
                   {hasData && !isEditing && (
-                    <p className="text-sm text-green-600 mt-0.5">Completed</p>
+                    <p className="text-sm text-green-600 dark:text-green-400 mt-0.5">Completed</p>
                   )}
                 </div>
                 {!isEditing && (
                   <button
                     type="button"
                     onClick={() => setEditingSection(sectionType)}
-                    className="text-sm font-medium text-blue-600 hover:text-blue-700"
+                    className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
                   >
                     {hasData ? 'Edit' : 'Add'}
                   </button>
@@ -137,7 +137,7 @@ export default function ProfileClient({ initialSections }: ProfileClientProps) {
               </div>
 
               {isEditing && (
-                <div className="px-6 pb-6 border-t border-gray-100 pt-4">
+                <div className="px-6 pb-6 border-t border-gray-100 dark:border-gray-800 pt-4">
                   {renderStepComponent(sectionType)}
                 </div>
               )}
