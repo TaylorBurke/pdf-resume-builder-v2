@@ -25,6 +25,20 @@ vi.mock('@/templates', () => ({
 
 import ResumeViewClient from '@/app/(app)/resume/[id]/client'
 
+const mockAnalysis = {
+  keyRequirements: [
+    { requirement: 'React experience', priority: 'high' as const },
+    { requirement: 'Node.js', priority: 'medium' as const },
+  ],
+  skillMatches: [
+    { skill: 'React', strength: 'strong' as const },
+    { skill: 'TypeScript', strength: 'moderate' as const },
+  ],
+  gaps: ['Docker experience'],
+  recommendedAngle: 'Focus on frontend expertise',
+  sectionsToInclude: ['experience' as const, 'skills' as const],
+}
+
 const mockResume = {
   id: 'test-1',
   jobTitle: 'Software Engineer',
@@ -35,6 +49,7 @@ const mockResume = {
     experience: [],
     skills: [],
   },
+  analysis: mockAnalysis,
   feedbackHistory: [],
 }
 
@@ -111,6 +126,40 @@ describe('ResumeViewClient', () => {
         mockPersonalInfo,
         'executive'
       )
+    })
+  })
+
+  describe('Analysis panel', () => {
+    it('renders collapsed analysis panel when analysis is present', () => {
+      render(
+        <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
+      )
+      expect(screen.getByRole('button', { name: /job analysis/i })).toBeInTheDocument()
+      // Content is hidden when collapsed
+      expect(screen.queryByText('React experience')).not.toBeInTheDocument()
+    })
+
+    it('expands analysis panel on click', async () => {
+      const user = userEvent.setup()
+      render(
+        <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
+      )
+
+      await user.click(screen.getByRole('button', { name: /job analysis/i }))
+
+      expect(screen.getByText('React experience')).toBeInTheDocument()
+      expect(screen.getByText('Docker experience')).toBeInTheDocument()
+      expect(screen.getByText('Focus on frontend expertise')).toBeInTheDocument()
+    })
+
+    it('does not render analysis panel when analysis is null', () => {
+      render(
+        <ResumeViewClient
+          resume={{ ...mockResume, analysis: null }}
+          personalInfo={mockPersonalInfo}
+        />
+      )
+      expect(screen.queryByRole('button', { name: /job analysis/i })).not.toBeInTheDocument()
     })
   })
 

@@ -5,11 +5,12 @@ import PagedPreview from '@/components/resume/PagedPreview'
 import TemplateSelector from '@/components/resume/TemplateSelector'
 import FeedbackForm from '@/components/resume/FeedbackForm'
 import DownloadButton from '@/components/resume/DownloadButton'
+import AnalysisPanel from '@/components/resume/AnalysisPanel'
 import { regenerateResume, updateResumeTemplate } from '@/actions/generation'
 import { getPreviewHtml } from '@/actions/preview'
 import { TEMPLATES } from '@/templates'
 import type { TemplateId } from '@/templates'
-import type { ResumeContent, PersonalInfo } from '@/types'
+import type { ResumeContent, PersonalInfo, JobAnalysis } from '@/types'
 
 interface ResumeData {
   id: string
@@ -17,6 +18,7 @@ interface ResumeData {
   company: string
   templateId: string | null
   resumeContent: ResumeContent | null
+  analysis: JobAnalysis | null
   feedbackHistory: { feedback: string; timestamp: string }[]
 }
 
@@ -134,6 +136,8 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
           </button>
         </div>
       </div>
+
+      {resume.analysis && <AnalysisPanel analysis={resume.analysis} />}
 
       <PagedPreview html={previewHtml} />
 
