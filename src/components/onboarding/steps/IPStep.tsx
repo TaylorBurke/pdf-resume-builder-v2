@@ -7,6 +7,7 @@ import type { IntellectualProperty, IntellectualPropertyEntry } from '@/types'
 interface IPStepProps {
   onSubmit: (data: IntellectualProperty) => void
   onSkip: () => void
+  onBack?: () => void
   initialData: Partial<IntellectualProperty> | null
 }
 
@@ -16,7 +17,7 @@ function emptyEntry(): IntellectualPropertyEntry {
   return { type: 'patent', title: '', description: '', url: '', date: '' }
 }
 
-export default function IPStep({ onSubmit, onSkip, initialData }: IPStepProps) {
+export default function IPStep({ onSubmit, onSkip, onBack, initialData }: IPStepProps) {
   const [entries, setEntries] = useState<IntellectualPropertyEntry[]>(
     initialData?.entries?.length ? initialData.entries : [emptyEntry()]
   )
@@ -58,6 +59,7 @@ export default function IPStep({ onSubmit, onSkip, initialData }: IPStepProps) {
       description="Add patents, publications, open-source projects, or other intellectual property."
       onSubmit={handleSubmit}
       onSkip={onSkip}
+      onBack={onBack}
     >
       <div className="space-y-6">
         {entries.map((entry, idx) => (

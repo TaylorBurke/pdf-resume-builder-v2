@@ -35,11 +35,16 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
   }
 
   function handleSaveModel() {
-    if (!model.trim()) return
+    const trimmed = model.trim()
+    if (!trimmed) return
+    if (!trimmed.includes('/')) {
+      setModelMessage('Model ID should be in the format "provider/model-name" (e.g., "anthropic/claude-sonnet-4").')
+      return
+    }
     setModelMessage(null)
     startTransition(async () => {
       try {
-        await savePreferredModel(model)
+        await savePreferredModel(trimmed)
         setModelMessage('Model preference saved successfully.')
       } catch {
         setModelMessage('Failed to save model preference.')
@@ -100,7 +105,16 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-1">Preferred Model</h2>
           <p className="text-sm text-gray-500 mb-4">
-            Choose the AI model for resume generation. Uses OpenRouter model IDs.
+            Choose the AI model for resume generation. Browse available models at{' '}
+            <a
+              href="https://openrouter.ai/models"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 underline"
+            >
+              openrouter.ai/models
+            </a>
+            .
           </p>
 
           <div className="flex gap-3">
@@ -123,7 +137,9 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
           </div>
 
           {modelMessage && (
-            <p className="mt-2 text-sm text-green-600">{modelMessage}</p>
+            <p className={`mt-2 text-sm ${modelMessage.includes('successfully') ? 'text-green-600' : 'text-red-600'}`}>
+              {modelMessage}
+            </p>
           )}
         </div>
       </div>

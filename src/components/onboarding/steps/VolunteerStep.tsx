@@ -7,6 +7,7 @@ import type { VolunteerWork, VolunteerEntry } from '@/types'
 interface VolunteerStepProps {
   onSubmit: (data: VolunteerWork) => void
   onSkip: () => void
+  onBack?: () => void
   initialData: Partial<VolunteerWork> | null
 }
 
@@ -14,7 +15,7 @@ function emptyEntry(): VolunteerEntry {
   return { organization: '', role: '', startDate: '', endDate: '', description: '' }
 }
 
-export default function VolunteerStep({ onSubmit, onSkip, initialData }: VolunteerStepProps) {
+export default function VolunteerStep({ onSubmit, onSkip, onBack, initialData }: VolunteerStepProps) {
   const [entries, setEntries] = useState<VolunteerEntry[]>(
     initialData?.entries?.length ? initialData.entries : [emptyEntry()]
   )
@@ -49,6 +50,7 @@ export default function VolunteerStep({ onSubmit, onSkip, initialData }: Volunte
       description="Add any volunteer work or community involvement."
       onSubmit={handleSubmit}
       onSkip={onSkip}
+      onBack={onBack}
     >
       <div className="space-y-6">
         {entries.map((entry, idx) => (

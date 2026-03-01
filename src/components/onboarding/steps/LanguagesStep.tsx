@@ -7,6 +7,7 @@ import type { Language, LanguageEntry } from '@/types'
 interface LanguagesStepProps {
   onSubmit: (data: Language) => void
   onSkip: () => void
+  onBack?: () => void
   initialData: Partial<Language> | null
 }
 
@@ -22,7 +23,7 @@ const PROFICIENCY_OPTIONS: LanguageEntry['proficiency'][] = [
   'basic',
 ]
 
-export default function LanguagesStep({ onSubmit, onSkip, initialData }: LanguagesStepProps) {
+export default function LanguagesStep({ onSubmit, onSkip, onBack, initialData }: LanguagesStepProps) {
   const [entries, setEntries] = useState<LanguageEntry[]>(
     initialData?.entries?.length ? initialData.entries : [emptyEntry()]
   )
@@ -49,6 +50,7 @@ export default function LanguagesStep({ onSubmit, onSkip, initialData }: Languag
       description="List the languages you speak and your proficiency level."
       onSubmit={handleSubmit}
       onSkip={onSkip}
+      onBack={onBack}
     >
       <div className="space-y-4">
         {entries.map((entry, idx) => (

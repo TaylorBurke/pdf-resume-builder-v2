@@ -7,6 +7,7 @@ interface SectionFormProps {
   description: string
   onSubmit: () => void
   onSkip: () => void
+  onBack?: () => void
   isRequired?: boolean
   children: ReactNode
   isLoading?: boolean
@@ -17,6 +18,7 @@ export default function SectionForm({
   description,
   onSubmit,
   onSkip,
+  onBack,
   isRequired = false,
   children,
   isLoading = false,
@@ -36,7 +38,19 @@ export default function SectionForm({
       <div className="space-y-4">{children}</div>
 
       <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-200">
-        <div>
+        <div className="flex items-center gap-4">
+          {onBack && (
+            <button
+              type="button"
+              onClick={onBack}
+              className="text-sm text-gray-600 hover:text-gray-900 flex items-center gap-1"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back
+            </button>
+          )}
           {!isRequired && (
             <button
               type="button"

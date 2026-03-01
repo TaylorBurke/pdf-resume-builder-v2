@@ -7,6 +7,7 @@ import type { Certificate, CertificateEntry } from '@/types'
 interface CertificatesStepProps {
   onSubmit: (data: Certificate) => void
   onSkip: () => void
+  onBack?: () => void
   initialData: Partial<Certificate> | null
 }
 
@@ -14,7 +15,7 @@ function emptyEntry(): CertificateEntry {
   return { name: '', issuer: '', date: '', credentialId: '', url: '' }
 }
 
-export default function CertificatesStep({ onSubmit, onSkip, initialData }: CertificatesStepProps) {
+export default function CertificatesStep({ onSubmit, onSkip, onBack, initialData }: CertificatesStepProps) {
   const [entries, setEntries] = useState<CertificateEntry[]>(
     initialData?.entries?.length ? initialData.entries : [emptyEntry()]
   )
@@ -49,6 +50,7 @@ export default function CertificatesStep({ onSubmit, onSkip, initialData }: Cert
       description="Add any professional certifications you hold."
       onSubmit={handleSubmit}
       onSkip={onSkip}
+      onBack={onBack}
     >
       <div className="space-y-6">
         {entries.map((entry, idx) => (

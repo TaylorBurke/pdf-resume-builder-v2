@@ -7,10 +7,11 @@ import type { PersonalInfo } from '@/types'
 interface PersonalInfoStepProps {
   onSubmit: (data: PersonalInfo) => void
   onSkip: () => void
+  onBack?: () => void
   initialData: Partial<PersonalInfo> | null
 }
 
-export default function PersonalInfoStep({ onSubmit, onSkip, initialData }: PersonalInfoStepProps) {
+export default function PersonalInfoStep({ onSubmit, onSkip, onBack, initialData }: PersonalInfoStepProps) {
   const [fullName, setFullName] = useState(initialData?.fullName ?? '')
   const [email, setEmail] = useState(initialData?.email ?? '')
   const [phone, setPhone] = useState(initialData?.phone ?? '')
@@ -39,6 +40,7 @@ export default function PersonalInfoStep({ onSubmit, onSkip, initialData }: Pers
       description="Let's start with your basic contact details. This information will appear at the top of your resume."
       onSubmit={handleSubmit}
       onSkip={onSkip}
+      onBack={onBack}
       isRequired
     >
       <div className="space-y-4">

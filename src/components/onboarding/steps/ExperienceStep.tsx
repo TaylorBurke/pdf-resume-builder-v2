@@ -7,6 +7,7 @@ import type { Experience, ExperienceEntry } from '@/types'
 interface ExperienceStepProps {
   onSubmit: (data: Experience) => void
   onSkip: () => void
+  onBack?: () => void
   initialData: Partial<Experience> | null
 }
 
@@ -14,7 +15,7 @@ function emptyEntry(): ExperienceEntry {
   return { company: '', title: '', startDate: '', endDate: '', current: false, location: '', bullets: [''] }
 }
 
-export default function ExperienceStep({ onSubmit, onSkip, initialData }: ExperienceStepProps) {
+export default function ExperienceStep({ onSubmit, onSkip, onBack, initialData }: ExperienceStepProps) {
   const [entries, setEntries] = useState<ExperienceEntry[]>(
     initialData?.entries?.length ? initialData.entries : [emptyEntry()]
   )
@@ -72,6 +73,7 @@ export default function ExperienceStep({ onSubmit, onSkip, initialData }: Experi
       description="Add your work experience, starting with the most recent position."
       onSubmit={handleSubmit}
       onSkip={onSkip}
+      onBack={onBack}
     >
       <div className="space-y-6">
         {entries.map((entry, idx) => (

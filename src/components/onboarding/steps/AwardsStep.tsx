@@ -7,6 +7,7 @@ import type { Award, AwardEntry } from '@/types'
 interface AwardsStepProps {
   onSubmit: (data: Award) => void
   onSkip: () => void
+  onBack?: () => void
   initialData: Partial<Award> | null
 }
 
@@ -14,7 +15,7 @@ function emptyEntry(): AwardEntry {
   return { name: '', issuer: '', date: '', description: '' }
 }
 
-export default function AwardsStep({ onSubmit, onSkip, initialData }: AwardsStepProps) {
+export default function AwardsStep({ onSubmit, onSkip, onBack, initialData }: AwardsStepProps) {
   const [entries, setEntries] = useState<AwardEntry[]>(
     initialData?.entries?.length ? initialData.entries : [emptyEntry()]
   )
@@ -48,6 +49,7 @@ export default function AwardsStep({ onSubmit, onSkip, initialData }: AwardsStep
       description="Add any awards, honors, or recognitions you have received."
       onSubmit={handleSubmit}
       onSkip={onSkip}
+      onBack={onBack}
     >
       <div className="space-y-6">
         {entries.map((entry, idx) => (

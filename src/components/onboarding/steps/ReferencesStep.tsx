@@ -7,6 +7,7 @@ import type { Reference, ReferenceEntry } from '@/types'
 interface ReferencesStepProps {
   onSubmit: (data: Reference) => void
   onSkip: () => void
+  onBack?: () => void
   initialData: Partial<Reference> | null
 }
 
@@ -14,7 +15,7 @@ function emptyEntry(): ReferenceEntry {
   return { name: '', title: '', company: '', email: '', phone: '', relationship: '' }
 }
 
-export default function ReferencesStep({ onSubmit, onSkip, initialData }: ReferencesStepProps) {
+export default function ReferencesStep({ onSubmit, onSkip, onBack, initialData }: ReferencesStepProps) {
   const [entries, setEntries] = useState<ReferenceEntry[]>(
     initialData?.entries?.length ? initialData.entries : [emptyEntry()]
   )
@@ -50,6 +51,7 @@ export default function ReferencesStep({ onSubmit, onSkip, initialData }: Refere
       description="Add professional references who can vouch for your work."
       onSubmit={handleSubmit}
       onSkip={onSkip}
+      onBack={onBack}
     >
       <div className="space-y-6">
         {entries.map((entry, idx) => (

@@ -7,10 +7,11 @@ import type { Interest } from '@/types'
 interface InterestsStepProps {
   onSubmit: (data: Interest) => void
   onSkip: () => void
+  onBack?: () => void
   initialData: Partial<Interest> | null
 }
 
-export default function InterestsStep({ onSubmit, onSkip, initialData }: InterestsStepProps) {
+export default function InterestsStep({ onSubmit, onSkip, onBack, initialData }: InterestsStepProps) {
   const [text, setText] = useState(initialData?.items?.join(', ') ?? '')
 
   function handleSubmit() {
@@ -28,6 +29,7 @@ export default function InterestsStep({ onSubmit, onSkip, initialData }: Interes
       description="Share your hobbies and interests. These can help make your resume more personable."
       onSubmit={handleSubmit}
       onSkip={onSkip}
+      onBack={onBack}
     >
       <div>
         <label htmlFor="interests" className="block text-sm font-medium text-gray-700 mb-1">

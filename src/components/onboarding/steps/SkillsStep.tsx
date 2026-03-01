@@ -7,6 +7,7 @@ import type { Skill, SkillCategory } from '@/types'
 interface SkillsStepProps {
   onSubmit: (data: Skill) => void
   onSkip: () => void
+  onBack?: () => void
   initialData: Partial<Skill> | null
 }
 
@@ -14,7 +15,7 @@ function emptyCategory(): SkillCategory {
   return { name: '', items: [] }
 }
 
-export default function SkillsStep({ onSubmit, onSkip, initialData }: SkillsStepProps) {
+export default function SkillsStep({ onSubmit, onSkip, onBack, initialData }: SkillsStepProps) {
   const [categories, setCategories] = useState<(SkillCategory & { itemsText: string })[]>(
     initialData?.categories?.length
       ? initialData.categories.map((c) => ({ ...c, itemsText: c.items.join(', ') }))
@@ -50,6 +51,7 @@ export default function SkillsStep({ onSubmit, onSkip, initialData }: SkillsStep
       description="Group your skills by category (e.g., Programming Languages, Frameworks, Tools)."
       onSubmit={handleSubmit}
       onSkip={onSkip}
+      onBack={onBack}
     >
       <div className="space-y-6">
         {categories.map((cat, idx) => (

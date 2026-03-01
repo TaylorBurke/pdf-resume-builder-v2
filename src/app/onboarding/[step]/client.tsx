@@ -46,6 +46,13 @@ export default function OnboardingStepClient({
     }
   }
 
+  function navigateBack() {
+    if (stepIndex > 0) {
+      const prevStep = ONBOARDING_STEPS[stepIndex - 1]
+      router.push(`/onboarding/${prevStep.path}`)
+    }
+  }
+
   async function handleSubmit(data: SectionData) {
     setIsLoading(true)
     try {
@@ -62,45 +69,47 @@ export default function OnboardingStepClient({
     navigateNext()
   }
 
+  const handleBack = stepIndex > 0 ? navigateBack : undefined
+
   const stepComponents: Record<string, React.ReactNode> = {
     personal_info: (
-      <PersonalInfoStep onSubmit={handleSubmit} onSkip={handleSkip} initialData={initialData as any} />
+      <PersonalInfoStep onSubmit={handleSubmit} onSkip={handleSkip} onBack={handleBack} initialData={initialData as any} />
     ),
     summary: (
-      <SummaryStep onSubmit={handleSubmit} onSkip={handleSkip} initialData={initialData as any} />
+      <SummaryStep onSubmit={handleSubmit} onSkip={handleSkip} onBack={handleBack} initialData={initialData as any} />
     ),
     experience: (
-      <ExperienceStep onSubmit={handleSubmit} onSkip={handleSkip} initialData={initialData as any} />
+      <ExperienceStep onSubmit={handleSubmit} onSkip={handleSkip} onBack={handleBack} initialData={initialData as any} />
     ),
     education: (
-      <EducationStep onSubmit={handleSubmit} onSkip={handleSkip} initialData={initialData as any} />
+      <EducationStep onSubmit={handleSubmit} onSkip={handleSkip} onBack={handleBack} initialData={initialData as any} />
     ),
     skills: (
-      <SkillsStep onSubmit={handleSubmit} onSkip={handleSkip} initialData={initialData as any} />
+      <SkillsStep onSubmit={handleSubmit} onSkip={handleSkip} onBack={handleBack} initialData={initialData as any} />
     ),
     projects: (
-      <ProjectsStep onSubmit={handleSubmit} onSkip={handleSkip} initialData={initialData as any} />
+      <ProjectsStep onSubmit={handleSubmit} onSkip={handleSkip} onBack={handleBack} initialData={initialData as any} />
     ),
     certificates: (
-      <CertificatesStep onSubmit={handleSubmit} onSkip={handleSkip} initialData={initialData as any} />
+      <CertificatesStep onSubmit={handleSubmit} onSkip={handleSkip} onBack={handleBack} initialData={initialData as any} />
     ),
     references: (
-      <ReferencesStep onSubmit={handleSubmit} onSkip={handleSkip} initialData={initialData as any} />
+      <ReferencesStep onSubmit={handleSubmit} onSkip={handleSkip} onBack={handleBack} initialData={initialData as any} />
     ),
     volunteer: (
-      <VolunteerStep onSubmit={handleSubmit} onSkip={handleSkip} initialData={initialData as any} />
+      <VolunteerStep onSubmit={handleSubmit} onSkip={handleSkip} onBack={handleBack} initialData={initialData as any} />
     ),
     languages: (
-      <LanguagesStep onSubmit={handleSubmit} onSkip={handleSkip} initialData={initialData as any} />
+      <LanguagesStep onSubmit={handleSubmit} onSkip={handleSkip} onBack={handleBack} initialData={initialData as any} />
     ),
     awards: (
-      <AwardsStep onSubmit={handleSubmit} onSkip={handleSkip} initialData={initialData as any} />
+      <AwardsStep onSubmit={handleSubmit} onSkip={handleSkip} onBack={handleBack} initialData={initialData as any} />
     ),
     ip: (
-      <IPStep onSubmit={handleSubmit} onSkip={handleSkip} initialData={initialData as any} />
+      <IPStep onSubmit={handleSubmit} onSkip={handleSkip} onBack={handleBack} initialData={initialData as any} />
     ),
     interests: (
-      <InterestsStep onSubmit={handleSubmit} onSkip={handleSkip} initialData={initialData as any} />
+      <InterestsStep onSubmit={handleSubmit} onSkip={handleSkip} onBack={handleBack} initialData={initialData as any} />
     ),
   }
 

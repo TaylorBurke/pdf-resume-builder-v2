@@ -7,6 +7,7 @@ import type { Project, ProjectEntry } from '@/types'
 interface ProjectsStepProps {
   onSubmit: (data: Project) => void
   onSkip: () => void
+  onBack?: () => void
   initialData: Partial<Project> | null
 }
 
@@ -18,7 +19,7 @@ function emptyEntry(): ProjectFormEntry {
   return { name: '', description: '', url: '', techStackText: '', highlights: [''] }
 }
 
-export default function ProjectsStep({ onSubmit, onSkip, initialData }: ProjectsStepProps) {
+export default function ProjectsStep({ onSubmit, onSkip, onBack, initialData }: ProjectsStepProps) {
   const [entries, setEntries] = useState<ProjectFormEntry[]>(
     initialData?.entries?.length
       ? initialData.entries.map((e) => ({
@@ -82,6 +83,7 @@ export default function ProjectsStep({ onSubmit, onSkip, initialData }: Projects
       description="Showcase personal or professional projects that demonstrate your skills."
       onSubmit={handleSubmit}
       onSkip={onSkip}
+      onBack={onBack}
     >
       <div className="space-y-6">
         {entries.map((entry, idx) => (

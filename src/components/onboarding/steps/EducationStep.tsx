@@ -7,6 +7,7 @@ import type { Education, EducationEntry } from '@/types'
 interface EducationStepProps {
   onSubmit: (data: Education) => void
   onSkip: () => void
+  onBack?: () => void
   initialData: Partial<Education> | null
 }
 
@@ -14,7 +15,7 @@ function emptyEntry(): EducationEntry {
   return { school: '', degree: '', field: '', graduationDate: '', gpa: '', honors: '' }
 }
 
-export default function EducationStep({ onSubmit, onSkip, initialData }: EducationStepProps) {
+export default function EducationStep({ onSubmit, onSkip, onBack, initialData }: EducationStepProps) {
   const [entries, setEntries] = useState<EducationEntry[]>(
     initialData?.entries?.length ? initialData.entries : [emptyEntry()]
   )
@@ -50,6 +51,7 @@ export default function EducationStep({ onSubmit, onSkip, initialData }: Educati
       description="Add your educational background."
       onSubmit={handleSubmit}
       onSkip={onSkip}
+      onBack={onBack}
     >
       <div className="space-y-6">
         {entries.map((entry, idx) => (
