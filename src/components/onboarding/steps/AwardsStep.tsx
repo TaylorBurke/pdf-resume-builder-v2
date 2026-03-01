@@ -50,6 +50,7 @@ export default function AwardsStep({ onSubmit, onSkip, onBack, initialData }: Aw
       onSubmit={handleSubmit}
       onSkip={onSkip}
       onBack={onBack}
+      isEmpty={!entries[0]?.name.trim()}
     >
       <div className="space-y-6">
         {entries.map((entry, idx) => (

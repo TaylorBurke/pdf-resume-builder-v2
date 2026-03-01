@@ -60,6 +60,7 @@ export default function IPStep({ onSubmit, onSkip, onBack, initialData }: IPStep
       onSubmit={handleSubmit}
       onSkip={onSkip}
       onBack={onBack}
+      isEmpty={!entries[0]?.title.trim()}
     >
       <div className="space-y-6">
         {entries.map((entry, idx) => (

@@ -52,6 +52,7 @@ export default function SkillsStep({ onSubmit, onSkip, onBack, initialData }: Sk
       onSubmit={handleSubmit}
       onSkip={onSkip}
       onBack={onBack}
+      isEmpty={!categories[0]?.name.trim()}
     >
       <div className="space-y-6">
         {categories.map((cat, idx) => (

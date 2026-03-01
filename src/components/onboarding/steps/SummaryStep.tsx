@@ -25,6 +25,7 @@ export default function SummaryStep({ onSubmit, onSkip, onBack, initialData }: S
       onSubmit={handleSubmit}
       onSkip={onSkip}
       onBack={onBack}
+      isEmpty={!text.trim()}
     >
       <div>
         <label htmlFor="summary" className="block text-sm font-medium text-gray-700 mb-1">

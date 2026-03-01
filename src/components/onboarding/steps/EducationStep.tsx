@@ -52,6 +52,7 @@ export default function EducationStep({ onSubmit, onSkip, onBack, initialData }:
       onSubmit={handleSubmit}
       onSkip={onSkip}
       onBack={onBack}
+      isEmpty={!entries[0]?.school.trim()}
     >
       <div className="space-y-6">
         {entries.map((entry, idx) => (

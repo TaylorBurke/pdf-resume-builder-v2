@@ -52,6 +52,7 @@ export default function ReferencesStep({ onSubmit, onSkip, onBack, initialData }
       onSubmit={handleSubmit}
       onSkip={onSkip}
       onBack={onBack}
+      isEmpty={!entries[0]?.name.trim()}
     >
       <div className="space-y-6">
         {entries.map((entry, idx) => (

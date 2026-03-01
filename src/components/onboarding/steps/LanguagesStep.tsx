@@ -51,6 +51,7 @@ export default function LanguagesStep({ onSubmit, onSkip, onBack, initialData }:
       onSubmit={handleSubmit}
       onSkip={onSkip}
       onBack={onBack}
+      isEmpty={!entries[0]?.language.trim()}
     >
       <div className="space-y-4">
         {entries.map((entry, idx) => (

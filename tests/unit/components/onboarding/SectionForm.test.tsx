@@ -17,34 +17,34 @@ describe('SectionForm', () => {
     expect(screen.getByText('Enter your basic details.')).toBeInTheDocument()
   })
 
-  it('shows skip button when not required', () => {
-    render(<SectionForm {...defaultProps} isRequired={false}><div>child</div></SectionForm>)
-    expect(screen.getByText('Skip')).toBeInTheDocument()
+  it('shows Skip as button text when not required and isEmpty', () => {
+    render(<SectionForm {...defaultProps} isRequired={false} isEmpty={true}><div>child</div></SectionForm>)
+    expect(screen.getByRole('button', { name: /skip/i })).toBeInTheDocument()
   })
 
-  it('hides skip button when required', () => {
+  it('shows Continue when required', () => {
     render(<SectionForm {...defaultProps} isRequired={true}><div>child</div></SectionForm>)
-    expect(screen.queryByText('Skip')).not.toBeInTheDocument()
-  })
-
-  it('has continue button', () => {
-    render(<SectionForm {...defaultProps}><div>child</div></SectionForm>)
     expect(screen.getByRole('button', { name: /continue/i })).toBeInTheDocument()
   })
 
-  it('calls onSubmit when form is submitted', async () => {
+  it('shows Continue when not required but has content', () => {
+    render(<SectionForm {...defaultProps} isRequired={false} isEmpty={false}><div>child</div></SectionForm>)
+    expect(screen.getByRole('button', { name: /continue/i })).toBeInTheDocument()
+  })
+
+  it('calls onSubmit when form has content', async () => {
     const user = userEvent.setup()
     const onSubmit = vi.fn()
-    render(<SectionForm {...defaultProps} onSubmit={onSubmit}><div>child</div></SectionForm>)
+    render(<SectionForm {...defaultProps} onSubmit={onSubmit} isEmpty={false}><div>child</div></SectionForm>)
     await user.click(screen.getByRole('button', { name: /continue/i }))
     expect(onSubmit).toHaveBeenCalledOnce()
   })
 
-  it('calls onSkip when skip button is clicked', async () => {
+  it('calls onSkip when form is empty and not required', async () => {
     const user = userEvent.setup()
     const onSkip = vi.fn()
-    render(<SectionForm {...defaultProps} onSkip={onSkip}><div>child</div></SectionForm>)
-    await user.click(screen.getByText('Skip'))
+    render(<SectionForm {...defaultProps} onSkip={onSkip} isRequired={false} isEmpty={true}><div>child</div></SectionForm>)
+    await user.click(screen.getByRole('button', { name: /skip/i }))
     expect(onSkip).toHaveBeenCalledOnce()
   })
 })

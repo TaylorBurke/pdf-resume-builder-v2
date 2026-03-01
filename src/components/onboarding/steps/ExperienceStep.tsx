@@ -74,6 +74,7 @@ export default function ExperienceStep({ onSubmit, onSkip, onBack, initialData }
       onSubmit={handleSubmit}
       onSkip={onSkip}
       onBack={onBack}
+      isEmpty={!entries[0]?.company.trim()}
     >
       <div className="space-y-6">
         {entries.map((entry, idx) => (

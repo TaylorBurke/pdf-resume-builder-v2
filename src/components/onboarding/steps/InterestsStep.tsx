@@ -30,6 +30,7 @@ export default function InterestsStep({ onSubmit, onSkip, onBack, initialData }:
       onSubmit={handleSubmit}
       onSkip={onSkip}
       onBack={onBack}
+      isEmpty={!text.trim()}
     >
       <div>
         <label htmlFor="interests" className="block text-sm font-medium text-gray-700 mb-1">

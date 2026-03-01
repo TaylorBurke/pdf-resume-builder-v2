@@ -51,6 +51,7 @@ export default function VolunteerStep({ onSubmit, onSkip, onBack, initialData }:
       onSubmit={handleSubmit}
       onSkip={onSkip}
       onBack={onBack}
+      isEmpty={!entries[0]?.organization.trim()}
     >
       <div className="space-y-6">
         {entries.map((entry, idx) => (
