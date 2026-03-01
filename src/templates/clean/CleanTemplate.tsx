@@ -1,5 +1,6 @@
 import React from 'react'
 import type { ResumeContent, PersonalInfo } from '@/types'
+import { formatDisplayUrl } from '@/lib/url'
 
 export interface TemplateProps {
   resume: ResumeContent
@@ -70,6 +71,10 @@ const styles = {
   contactSeparator: {
     color: colors.border,
     margin: `0 ${spacing.xs}px`,
+  },
+  contactLink: {
+    color: colors.accent,
+    textDecoration: 'none',
   },
   section: {
     marginBottom: spacing.lg,
@@ -212,14 +217,14 @@ const styles = {
 
 // ── Component ──────────────────────────────────────────────────────────────
 export function CleanTemplate({ resume, personalInfo }: TemplateProps) {
-  const contactItems: string[] = []
-  if (personalInfo.email) contactItems.push(personalInfo.email)
-  if (personalInfo.phone) contactItems.push(personalInfo.phone)
-  if (personalInfo.location) contactItems.push(personalInfo.location)
-  if (personalInfo.linkedinUrl) contactItems.push(personalInfo.linkedinUrl)
-  if (personalInfo.githubUrl) contactItems.push(personalInfo.githubUrl)
-  if (personalInfo.portfolioUrl) contactItems.push(personalInfo.portfolioUrl)
-  if (personalInfo.websiteUrl) contactItems.push(personalInfo.websiteUrl)
+  const contactItems: { text: string; href?: string }[] = []
+  if (personalInfo.email) contactItems.push({ text: personalInfo.email, href: `mailto:${personalInfo.email}` })
+  if (personalInfo.phone) contactItems.push({ text: personalInfo.phone })
+  if (personalInfo.location) contactItems.push({ text: personalInfo.location })
+  if (personalInfo.linkedinUrl) contactItems.push({ text: formatDisplayUrl(personalInfo.linkedinUrl), href: personalInfo.linkedinUrl })
+  if (personalInfo.githubUrl) contactItems.push({ text: formatDisplayUrl(personalInfo.githubUrl), href: personalInfo.githubUrl })
+  if (personalInfo.portfolioUrl) contactItems.push({ text: formatDisplayUrl(personalInfo.portfolioUrl), href: personalInfo.portfolioUrl })
+  if (personalInfo.websiteUrl) contactItems.push({ text: formatDisplayUrl(personalInfo.websiteUrl), href: personalInfo.websiteUrl })
 
   return (
     <div style={styles.page}>
@@ -231,7 +236,11 @@ export function CleanTemplate({ resume, personalInfo }: TemplateProps) {
           {contactItems.map((item, i) => (
             <React.Fragment key={i}>
               {i > 0 && <span style={styles.contactSeparator}>|</span>}
-              <span>{item}</span>
+              {item.href ? (
+                <a href={item.href} style={styles.contactLink}>{item.text}</a>
+              ) : (
+                <span>{item.text}</span>
+              )}
             </React.Fragment>
           ))}
         </div>
