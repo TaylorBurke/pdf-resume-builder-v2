@@ -118,9 +118,8 @@ describe('ResumeViewClient', () => {
     })
 
     // Open drawer and switch to Customize tab to access template selector
-    const customizeButtons = screen.getAllByRole('button', { name: /customize/i })
-    await user.click(customizeButtons[0]) // Open drawer
-    await user.click(screen.getAllByRole('button', { name: /customize/i })[1]) // Switch to Customize tab
+    await user.click(screen.getByRole('button', { name: /customize/i })) // Open drawer
+    await user.click(screen.getByRole('tab', { name: /customize/i })) // Switch to Customize tab
 
     // Click "Executive" template button
     await user.click(screen.getByRole('button', { name: /executive/i }))
@@ -173,8 +172,7 @@ describe('ResumeViewClient', () => {
       render(
         <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
       )
-      const customizeButtons = screen.getAllByRole('button', { name: /customize/i })
-      expect(customizeButtons.length).toBeGreaterThanOrEqual(1)
+      expect(screen.getByRole('button', { name: /customize/i })).toBeInTheDocument()
     })
 
     it('opens drawer when toggle is clicked', async () => {
@@ -186,7 +184,7 @@ describe('ResumeViewClient', () => {
       const drawer = screen.getByTestId('controls-drawer')
       expect(drawer).toHaveClass('translate-x-full')
 
-      await user.click(screen.getAllByRole('button', { name: /customize/i })[0])
+      await user.click(screen.getByRole('button', { name: /customize/i }))
 
       expect(drawer).toHaveClass('translate-x-0')
     })
@@ -197,7 +195,7 @@ describe('ResumeViewClient', () => {
         <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
       )
 
-      await user.click(screen.getAllByRole('button', { name: /customize/i })[0])
+      await user.click(screen.getByRole('button', { name: /customize/i }))
       const drawer = screen.getByTestId('controls-drawer')
       expect(drawer).toHaveClass('translate-x-0')
 
@@ -210,12 +208,10 @@ describe('ResumeViewClient', () => {
       render(
         <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
       )
-      await user.click(screen.getAllByRole('button', { name: /customize/i })[0])
+      await user.click(screen.getByRole('button', { name: /customize/i }))
       // Drawer is now open, both tabs visible
-      expect(screen.getByRole('button', { name: /^edit$/i })).toBeInTheDocument()
-      // "Customize" button exists as both the toggle and the tab — use getAllByRole
-      const customizeButtons = screen.getAllByRole('button', { name: /customize/i })
-      expect(customizeButtons.length).toBeGreaterThanOrEqual(2)
+      expect(screen.getByRole('tab', { name: /edit/i })).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name: /customize/i })).toBeInTheDocument()
     })
   })
 })

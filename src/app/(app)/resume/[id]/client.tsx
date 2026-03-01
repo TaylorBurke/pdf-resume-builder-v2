@@ -155,9 +155,11 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
         }`}
       >
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
-          <div className="flex gap-1">
+          <div className="flex gap-1" role="tablist">
             <button
               type="button"
+              role="tab"
+              aria-selected={drawerTab === 'edit'}
               onClick={() => setDrawerTab('edit')}
               className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
                 drawerTab === 'edit'
@@ -169,6 +171,8 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
             </button>
             <button
               type="button"
+              role="tab"
+              aria-selected={drawerTab === 'customize'}
               onClick={() => setDrawerTab('customize')}
               className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
                 drawerTab === 'customize'
