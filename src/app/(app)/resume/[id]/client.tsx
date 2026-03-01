@@ -2,11 +2,12 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import ResumePreview from '@/components/resume/ResumePreview'
 import TemplateSelector from '@/components/resume/TemplateSelector'
 import FeedbackForm from '@/components/resume/FeedbackForm'
 import DownloadButton from '@/components/resume/DownloadButton'
 import { regenerateResume, updateResumeTemplate } from '@/actions/generation'
+import { TEMPLATES } from '@/templates'
+import type { TemplateId } from '@/templates'
 import type { ResumeContent, PersonalInfo } from '@/types'
 
 interface ResumeData {
@@ -26,11 +27,11 @@ interface ResumeViewClientProps {
 export default function ResumeViewClient({ resume, personalInfo }: ResumeViewClientProps) {
   const router = useRouter()
   const [content, setContent] = useState<ResumeContent | null>(resume.resumeContent)
-  const [templateId, setTemplateId] = useState(resume.templateId ?? 'clean')
+  const [templateId, setTemplateId] = useState<TemplateId>((resume.templateId as TemplateId) ?? 'clean')
   const [isPending, startTransition] = useTransition()
 
   function handleTemplateChange(newTemplateId: string) {
-    setTemplateId(newTemplateId)
+    setTemplateId(newTemplateId as TemplateId)
     startTransition(async () => {
       await updateResumeTemplate(resume.id, newTemplateId)
     })
@@ -51,6 +52,8 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
     )
   }
 
+  const TemplateComponent = TEMPLATES[templateId].component
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -64,7 +67,7 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Resume Preview */}
         <div className="lg:col-span-2">
-          <ResumePreview content={content} personalInfo={personalInfo} />
+          <TemplateComponent resume={content} personalInfo={personalInfo ?? { fullName: '', email: '' }} />
         </div>
 
         {/* Sidebar */}
