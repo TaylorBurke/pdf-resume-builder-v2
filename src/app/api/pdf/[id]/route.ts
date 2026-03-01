@@ -60,7 +60,7 @@ export async function GET(
 
     const filename = `Resume-${personalInfo.fullName.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`
 
-    return new Response(pdfBuffer as unknown as BodyInit, {
+    return new Response(Buffer.from(pdfBuffer), {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="${filename}"`,
