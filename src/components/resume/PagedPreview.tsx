@@ -70,6 +70,7 @@ export default function PagedPreview({ html }: PagedPreviewProps) {
                 width: PAGE_WIDTH,
                 height: PAGE_HEIGHT,
                 overflow: 'hidden',
+                background: 'white',
               }}
             >
               <iframe
