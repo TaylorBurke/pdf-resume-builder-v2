@@ -67,9 +67,10 @@ export async function GET(
       },
     })
   } catch (error) {
-    console.error('PDF generation error:', error)
+    const message = error instanceof Error ? error.message : String(error)
+    console.error('PDF generation error:', message, error)
     return NextResponse.json(
-      { error: 'Failed to generate resume' },
+      { error: 'Failed to generate resume', detail: message },
       { status: 500 }
     )
   }
