@@ -1,74 +1,86 @@
 'use client'
 
-import { useRef, useState, useEffect, type ReactNode } from 'react'
+import { useRef, useState, useCallback } from 'react'
 
 const PAGE_WIDTH = 816
 const PAGE_HEIGHT = 1056
 
 interface PagedPreviewProps {
-  children: ReactNode
+  html: string
 }
 
-export default function PagedPreview({ children }: PagedPreviewProps) {
-  const measureRef = useRef<HTMLDivElement>(null)
+export default function PagedPreview({ html }: PagedPreviewProps) {
+  const measureRef = useRef<HTMLIFrameElement>(null)
   const [pageCount, setPageCount] = useState(1)
 
-  useEffect(() => {
-    const el = measureRef.current
-    if (!el) return
-
-    function measure() {
-      if (!el) return
-      const height = el.scrollHeight
-      setPageCount(Math.max(1, Math.ceil(height / PAGE_HEIGHT)))
-    }
-
-    measure()
-
-    const observer = new ResizeObserver(measure)
-    observer.observe(el)
-    return () => observer.disconnect()
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- ResizeObserver handles content changes
+  const handleMeasureLoad = useCallback(() => {
+    const iframe = measureRef.current
+    if (!iframe?.contentDocument?.body) return
+    const height = iframe.contentDocument.body.scrollHeight
+    setPageCount(Math.max(1, Math.ceil(height / PAGE_HEIGHT)))
   }, [])
+
+  function handlePageLoad(e: React.SyntheticEvent<HTMLIFrameElement>, pageIndex: number) {
+    const iframe = e.currentTarget
+    try {
+      iframe.contentWindow?.scrollTo(0, pageIndex * PAGE_HEIGHT)
+    } catch {
+      // cross-origin safety — srcdoc should be same-origin so this shouldn't fire
+    }
+  }
+
+  if (!html) {
+    return (
+      <div data-testid="paged-preview" className="text-center py-12">
+        <p className="text-gray-500 dark:text-gray-400">Generating preview...</p>
+      </div>
+    )
+  }
 
   return (
     <div data-testid="paged-preview">
-      {/* Hidden measurement container */}
-      <div
+      {/* Hidden measurement iframe */}
+      <iframe
         ref={measureRef}
+        srcDoc={html}
+        onLoad={handleMeasureLoad}
         aria-hidden="true"
+        tabIndex={-1}
         style={{
           position: 'absolute',
           visibility: 'hidden',
           width: PAGE_WIDTH,
+          height: 0,
           overflow: 'hidden',
           pointerEvents: 'none',
+          border: 'none',
         }}
-      >
-        {children}
-      </div>
+      />
 
       {/* Visible pages */}
       <div className="flex flex-col items-center gap-8">
         {Array.from({ length: pageCount }, (_, i) => (
           <div key={i}>
             <div
-              data-testid={`page-${i + 1}`}
-              className="shadow-lg border border-gray-200 dark:border-gray-700 bg-white"
+              className="shadow-lg border border-gray-200 dark:border-gray-700"
               style={{
                 width: PAGE_WIDTH,
                 height: PAGE_HEIGHT,
                 overflow: 'hidden',
-                position: 'relative',
               }}
             >
-              <div
+              <iframe
+                data-testid={`page-${i + 1}`}
+                srcDoc={html}
+                onLoad={(e) => handlePageLoad(e, i)}
+                scrolling="no"
                 style={{
-                  marginTop: -(i * PAGE_HEIGHT),
+                  width: PAGE_WIDTH,
+                  height: PAGE_HEIGHT,
+                  border: 'none',
+                  display: 'block',
                 }}
-              >
-                {children}
-              </div>
+              />
             </div>
             <p className="text-center text-xs text-gray-400 dark:text-gray-500 mt-2">
               Page {i + 1} of {pageCount}

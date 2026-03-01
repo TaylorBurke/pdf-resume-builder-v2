@@ -1,11 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-
-// Mock next/navigation
-vi.mock('next/navigation', () => ({
-  useRouter: () => ({ refresh: vi.fn() }),
-}))
 
 // Mock server actions
 vi.mock('@/actions/generation', () => ({
@@ -13,52 +8,20 @@ vi.mock('@/actions/generation', () => ({
   updateResumeTemplate: vi.fn(),
 }))
 
-// Mock template components so we can detect which renders
-vi.mock('@/templates', () => ({
-  TEMPLATES: {
-    clean: {
-      name: 'Clean',
-      component: ({ resume, personalInfo }: any) => (
-        <div data-testid="template-clean">Clean Template</div>
-      ),
-      description: 'Minimalist',
-    },
-    bold: {
-      name: 'Bold',
-      component: ({ resume, personalInfo }: any) => (
-        <div data-testid="template-bold">Bold Template</div>
-      ),
-      description: 'Modern',
-    },
-    executive: {
-      name: 'Executive',
-      component: ({ resume, personalInfo }: any) => (
-        <div data-testid="template-executive">Executive Template</div>
-      ),
-      description: 'Professional',
-    },
-  },
+// Mock preview server action to return HTML with identifiable template markers
+const mockGetPreviewHtml = vi.fn()
+vi.mock('@/actions/preview', () => ({
+  getPreviewHtml: (...args: any[]) => mockGetPreviewHtml(...args),
 }))
 
-// Mock ResizeObserver which jsdom doesn't provide
-class MockResizeObserver {
-  callback: ResizeObserverCallback
-  constructor(callback: ResizeObserverCallback) {
-    this.callback = callback
-  }
-  observe(target: Element) {
-    this.callback(
-      [{ target, contentRect: {} } as ResizeObserverEntry],
-      this as unknown as ResizeObserver
-    )
-  }
-  unobserve() {}
-  disconnect() {}
-}
-
-beforeEach(() => {
-  vi.stubGlobal('ResizeObserver', MockResizeObserver)
-})
+// Mock templates registry (still needed for isValidTemplateId and TemplateSelector)
+vi.mock('@/templates', () => ({
+  TEMPLATES: {
+    clean: { name: 'Clean', component: () => null, description: 'Minimalist' },
+    bold: { name: 'Bold', component: () => null, description: 'Modern' },
+    executive: { name: 'Executive', component: () => null, description: 'Professional' },
+  },
+}))
 
 import ResumeViewClient from '@/app/(app)/resume/[id]/client'
 
@@ -80,40 +43,75 @@ const mockPersonalInfo = {
   email: 'jane@example.com',
 }
 
+beforeEach(() => {
+  mockGetPreviewHtml.mockReset()
+  mockGetPreviewHtml.mockResolvedValue('<html><body><div>Preview</div></body></html>')
+})
+
 describe('ResumeViewClient', () => {
-  it('renders clean template by default when templateId is null', () => {
+  it('calls getPreviewHtml on mount with default template', async () => {
     render(
       <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
     )
-    // PagedPreview renders children twice (measurement + visible), so use getAllByTestId
-    expect(screen.getAllByTestId('template-clean').length).toBeGreaterThanOrEqual(1)
+
+    await waitFor(() => {
+      expect(mockGetPreviewHtml).toHaveBeenCalledWith(
+        mockResume.resumeContent,
+        mockPersonalInfo,
+        'clean'
+      )
+    })
   })
 
-  it('renders the template matching the stored templateId', () => {
+  it('calls getPreviewHtml with stored templateId', async () => {
     render(
       <ResumeViewClient
         resume={{ ...mockResume, templateId: 'bold' }}
         personalInfo={mockPersonalInfo}
       />
     )
-    expect(screen.getAllByTestId('template-bold').length).toBeGreaterThanOrEqual(1)
+
+    await waitFor(() => {
+      expect(mockGetPreviewHtml).toHaveBeenCalledWith(
+        mockResume.resumeContent,
+        mockPersonalInfo,
+        'bold'
+      )
+    })
   })
 
-  it('switches template when user clicks a different template button', async () => {
+  it('renders PagedPreview with the returned HTML', async () => {
+    mockGetPreviewHtml.mockResolvedValue('<html><body><div>Test HTML</div></body></html>')
+
+    render(
+      <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
+    )
+
+    await waitFor(() => {
+      expect(screen.getByTestId('paged-preview')).toBeInTheDocument()
+    })
+  })
+
+  it('calls getPreviewHtml again when template changes', async () => {
     const user = userEvent.setup()
     render(
       <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
     )
 
-    // Initially clean
-    expect(screen.getAllByTestId('template-clean').length).toBeGreaterThanOrEqual(1)
+    await waitFor(() => {
+      expect(mockGetPreviewHtml).toHaveBeenCalledTimes(1)
+    })
 
-    // Click "Executive" template button (in the drawer overlay)
+    // Click "Executive" template button
     await user.click(screen.getByRole('button', { name: /executive/i }))
 
-    // Should now show executive template
-    expect(screen.getAllByTestId('template-executive').length).toBeGreaterThanOrEqual(1)
-    expect(screen.queryByTestId('template-clean')).not.toBeInTheDocument()
+    await waitFor(() => {
+      expect(mockGetPreviewHtml).toHaveBeenCalledWith(
+        mockResume.resumeContent,
+        mockPersonalInfo,
+        'executive'
+      )
+    })
   })
 
   describe('Overlay drawer', () => {

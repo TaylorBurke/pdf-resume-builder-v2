@@ -1,61 +1,37 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 
 import PagedPreview from '@/components/resume/PagedPreview'
 
-// Mock ResizeObserver which jsdom doesn't provide
-class MockResizeObserver {
-  callback: ResizeObserverCallback
-  constructor(callback: ResizeObserverCallback) {
-    this.callback = callback
-  }
-  observe(target: Element) {
-    this.callback(
-      [{ target, contentRect: {} } as ResizeObserverEntry],
-      this as unknown as ResizeObserver
-    )
-  }
-  unobserve() {}
-  disconnect() {}
-}
-
-beforeEach(() => {
-  vi.stubGlobal('ResizeObserver', MockResizeObserver)
-})
+const mockHtml = '<html><body><div style="width:816px;min-height:1056px;">Page content</div></body></html>'
 
 describe('PagedPreview', () => {
-  it('renders children inside page containers', () => {
-    render(
-      <PagedPreview>
-        <div data-testid="template-content">Resume content</div>
-      </PagedPreview>
-    )
-
-    // Children appear in both the hidden measurement container and the visible page
-    const elements = screen.getAllByTestId('template-content')
-    expect(elements.length).toBeGreaterThanOrEqual(1)
-    expect(elements[0]).toBeInTheDocument()
+  it('renders the paged preview container', () => {
+    render(<PagedPreview html={mockHtml} />)
+    expect(screen.getByTestId('paged-preview')).toBeInTheDocument()
   })
 
-  it('renders at least one page container', () => {
-    render(
-      <PagedPreview>
-        <div style={{ width: 816, minHeight: 1056 }}>Page 1 content</div>
-      </PagedPreview>
-    )
-
-    expect(screen.getByTestId('paged-preview')).toBeInTheDocument()
+  it('renders at least one page iframe', () => {
+    render(<PagedPreview html={mockHtml} />)
     const pages = screen.getAllByTestId(/^page-\d+$/)
     expect(pages.length).toBeGreaterThanOrEqual(1)
   })
 
-  it('shows page labels', () => {
-    render(
-      <PagedPreview>
-        <div style={{ width: 816, minHeight: 1056 }}>Content</div>
-      </PagedPreview>
-    )
+  it('renders iframes with srcdoc attribute', () => {
+    render(<PagedPreview html={mockHtml} />)
+    const pages = screen.getAllByTestId(/^page-\d+$/)
+    // Each page is an iframe with srcdoc
+    expect(pages[0].tagName).toBe('IFRAME')
+    expect(pages[0]).toHaveAttribute('srcdoc', mockHtml)
+  })
 
+  it('shows page labels', () => {
+    render(<PagedPreview html={mockHtml} />)
     expect(screen.getByText(/page 1/i)).toBeInTheDocument()
+  })
+
+  it('shows loading state when html is empty', () => {
+    render(<PagedPreview html="" />)
+    expect(screen.getByText(/generating preview/i)).toBeInTheDocument()
   })
 })

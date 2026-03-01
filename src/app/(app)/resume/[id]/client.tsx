@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useTransition } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useTransition, useEffect, useMemo } from 'react'
 import PagedPreview from '@/components/resume/PagedPreview'
 import TemplateSelector from '@/components/resume/TemplateSelector'
 import FeedbackForm from '@/components/resume/FeedbackForm'
 import DownloadButton from '@/components/resume/DownloadButton'
 import { regenerateResume, updateResumeTemplate } from '@/actions/generation'
+import { getPreviewHtml } from '@/actions/preview'
 import { TEMPLATES } from '@/templates'
 import type { TemplateId } from '@/templates'
 import type { ResumeContent, PersonalInfo } from '@/types'
@@ -30,12 +30,35 @@ function isValidTemplateId(id: string): id is TemplateId {
 }
 
 export default function ResumeViewClient({ resume, personalInfo }: ResumeViewClientProps) {
-  const router = useRouter()
   const [content, setContent] = useState<ResumeContent | null>(resume.resumeContent)
   const [templateId, setTemplateId] = useState<TemplateId>(
     resume.templateId && isValidTemplateId(resume.templateId) ? resume.templateId : 'clean'
   )
   const [isPending, startTransition] = useTransition()
+  const [previewHtml, setPreviewHtml] = useState('')
+  const [drawerOpen, setDrawerOpen] = useState(false)
+
+  const personalInfoKey = JSON.stringify(personalInfo)
+  const resolvedPersonalInfo = useMemo(
+    () => personalInfo ?? { fullName: '', email: '' },
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- serialized key tracks value changes
+    [personalInfoKey]
+  )
+
+  // Load preview HTML on mount and when content/template changes
+  useEffect(() => {
+    if (!content) return
+    let cancelled = false
+    ;(async () => {
+      try {
+        const html = await getPreviewHtml(content, resolvedPersonalInfo, templateId)
+        if (!cancelled) setPreviewHtml(html)
+      } catch (err) {
+        if (!cancelled) console.error('Failed to load preview:', err)
+      }
+    })()
+    return () => { cancelled = true }
+  }, [content, templateId, resolvedPersonalInfo])
 
   function handleTemplateChange(newTemplateId: string) {
     if (!isValidTemplateId(newTemplateId)) return
@@ -52,8 +75,6 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
     })
   }
 
-  const [drawerOpen, setDrawerOpen] = useState(false)
-
   if (!content) {
     return (
       <div className="text-center py-12">
@@ -61,8 +82,6 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
       </div>
     )
   }
-
-  const TemplateComponent = TEMPLATES[templateId].component
 
   const sidebarContent = (
     <>
@@ -116,9 +135,7 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
         </div>
       </div>
 
-      <PagedPreview>
-        <TemplateComponent resume={content} personalInfo={personalInfo ?? { fullName: '', email: '' }} />
-      </PagedPreview>
+      <PagedPreview html={previewHtml} />
 
       {drawerOpen && (
         <div

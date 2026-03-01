@@ -2,6 +2,10 @@ import { createElement } from 'react'
 import { TEMPLATES, type TemplateId } from '@/templates'
 import type { ResumeContent, PersonalInfo } from '@/types'
 
+function escapeHtml(str: string): string {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+}
+
 /**
  * Render a resume to a self-contained HTML document suitable for
  * Puppeteer PDF conversion or direct browser preview.
@@ -27,7 +31,7 @@ export async function renderResumeToHtml(
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Resume - ${personalInfo.fullName}</title>
+  <title>Resume - ${escapeHtml(personalInfo.fullName)}</title>
   <style>
     @page { size: letter; margin: 0; }
     * { box-sizing: border-box; }
