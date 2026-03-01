@@ -39,6 +39,7 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
   const [isPending, startTransition] = useTransition()
   const [previewHtml, setPreviewHtml] = useState('')
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [drawerTab, setDrawerTab] = useState<'edit' | 'customize'>('edit')
 
   const personalInfoKey = JSON.stringify(personalInfo)
   const resolvedPersonalInfo = useMemo(
@@ -154,7 +155,30 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
         }`}
       >
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Customize</h2>
+          <div className="flex gap-1">
+            <button
+              type="button"
+              onClick={() => setDrawerTab('edit')}
+              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                drawerTab === 'edit'
+                  ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+              }`}
+            >
+              Edit
+            </button>
+            <button
+              type="button"
+              onClick={() => setDrawerTab('customize')}
+              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                drawerTab === 'customize'
+                  ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+              }`}
+            >
+              Customize
+            </button>
+          </div>
           <button
             type="button"
             onClick={() => setDrawerOpen(false)}
@@ -168,7 +192,11 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
         </div>
         <div className="p-4 space-y-6 overflow-y-auto h-[calc(100%-65px)]">
           <DownloadButton resumeId={resume.id} />
-          {sidebarContent}
+          {drawerTab === 'edit' ? (
+            <p className="text-sm text-gray-500 dark:text-gray-400">Section editors coming soon...</p>
+          ) : (
+            sidebarContent
+          )}
         </div>
       </div>
     </div>
