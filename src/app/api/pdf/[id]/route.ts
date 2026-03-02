@@ -6,6 +6,7 @@ import { resumes, profileSections } from '@/lib/db/schema'
 import { renderResumeToHtml } from '@/lib/pdf/generator'
 import { generatePdf } from '@/lib/pdf/puppeteer'
 import type { TemplateId } from '@/templates'
+import { buildResumeFilename } from '@/lib/filename'
 import type { ResumeContent, PersonalInfo } from '@/types'
 
 export async function GET(
@@ -58,8 +59,7 @@ export async function GET(
     const html = await renderResumeToHtml(resumeContent, personalInfo, templateId)
     const pdfBuffer = await generatePdf(html)
 
-    const sanitize = (s: string) => s.replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '')
-    const filename = `${sanitize(personalInfo.fullName)}-${sanitize(resume.company)}-${sanitize(resume.jobTitle)}.pdf`
+    const filename = buildResumeFilename(personalInfo.fullName, resume.company, resume.jobTitle)
 
     return new Response(Buffer.from(pdfBuffer), {
       headers: {

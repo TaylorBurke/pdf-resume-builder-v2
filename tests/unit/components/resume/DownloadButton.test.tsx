@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import DownloadButton from '@/components/resume/DownloadButton'
 
@@ -100,7 +100,9 @@ describe('DownloadButton', () => {
     })
 
     // After 2 seconds, should reset to idle
-    vi.advanceTimersByTime(2000)
+    await act(async () => {
+      vi.advanceTimersByTime(2000)
+    })
     await waitFor(() => {
       expect(screen.getByRole('button', { name: /download pdf/i })).toBeInTheDocument()
     })

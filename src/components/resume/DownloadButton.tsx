@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
+import { buildResumeFilename } from '@/lib/filename'
 
 type DownloadState = 'idle' | 'loading' | 'error'
 
@@ -12,10 +13,6 @@ interface DownloadButtonProps {
   iconOnly?: boolean
 }
 
-function sanitize(s: string) {
-  return s.replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '')
-}
-
 export default function DownloadButton({
   resumeId,
   fullName,
@@ -24,9 +21,15 @@ export default function DownloadButton({
   iconOnly = false,
 }: DownloadButtonProps) {
   const [state, setState] = useState<DownloadState>('idle')
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>()
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    }
+  }, [])
 
   const handleDownload = useCallback(async () => {
-    if (state === 'loading') return
     setState('loading')
     try {
       const res = await fetch(`/api/pdf/${resumeId}`)
@@ -35,15 +38,15 @@ export default function DownloadButton({
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `${sanitize(fullName)}-${sanitize(company)}-${sanitize(jobTitle)}.pdf`
+      a.download = buildResumeFilename(fullName, company, jobTitle)
       a.click()
       URL.revokeObjectURL(url)
       setState('idle')
     } catch {
       setState('error')
-      setTimeout(() => setState('idle'), 2000)
+      timeoutRef.current = setTimeout(() => setState('idle'), 2000)
     }
-  }, [resumeId, fullName, company, jobTitle, state])
+  }, [resumeId, fullName, company, jobTitle])
 
   const label =
     state === 'loading' ? 'Downloading...' :
