@@ -331,15 +331,15 @@ export function ExecutiveTemplate({ resume, personalInfo }: TemplateProps) {
       <div style={s.body}>
         {/* Summary */}
         {resume.summary && (
-          <div style={s.card}>
+          <section style={s.card}>
             <h2 style={s.sectionTitle}>Executive Summary</h2>
             <p style={s.summaryText}>{resume.summary}</p>
-          </div>
+          </section>
         )}
 
         {/* Experience */}
         {resume.experience && resume.experience.length > 0 && (
-          <div style={s.card}>
+          <section style={s.card}>
             <h2 style={s.sectionTitle}>Professional Experience</h2>
             {resume.experience.map((exp, i) => (
               <div key={i} style={s.expEntry}>
@@ -357,12 +357,12 @@ export function ExecutiveTemplate({ resume, personalInfo }: TemplateProps) {
                 </div>
               </div>
             ))}
-          </div>
+          </section>
         )}
 
         {/* Education */}
         {resume.education && resume.education.length > 0 && (
-          <div style={s.card}>
+          <section style={s.card}>
             <h2 style={s.sectionTitle}>Education</h2>
             {resume.education.map((edu, i) => (
               <div key={i} style={s.eduEntry}>
@@ -375,12 +375,12 @@ export function ExecutiveTemplate({ resume, personalInfo }: TemplateProps) {
                 </div>
               </div>
             ))}
-          </div>
+          </section>
         )}
 
         {/* Skills */}
         {resume.skills && resume.skills.length > 0 && (
-          <div style={s.card}>
+          <section style={s.card}>
             <h2 style={s.sectionTitle}>Core Competencies</h2>
             <div style={s.skillsGrid}>
               {resume.skills.map((cat, i) => (
@@ -394,12 +394,12 @@ export function ExecutiveTemplate({ resume, personalInfo }: TemplateProps) {
                 </div>
               ))}
             </div>
-          </div>
+          </section>
         )}
 
         {/* Projects */}
         {resume.projects && resume.projects.length > 0 && (
-          <div style={s.card}>
+          <section style={s.card}>
             <h2 style={s.sectionTitle}>Key Projects</h2>
             {resume.projects.map((proj, i) => (
               <div key={i} style={s.projEntry}>
@@ -417,12 +417,12 @@ export function ExecutiveTemplate({ resume, personalInfo }: TemplateProps) {
                 )}
               </div>
             ))}
-          </div>
+          </section>
         )}
 
         {/* Certificates */}
         {resume.certificates && resume.certificates.length > 0 && (
-          <div style={s.card}>
+          <section style={s.card}>
             <h2 style={s.sectionTitle}>Certifications</h2>
             {resume.certificates.map((cert, i) => (
               <div key={i} style={s.certEntry}>
@@ -433,12 +433,12 @@ export function ExecutiveTemplate({ resume, personalInfo }: TemplateProps) {
                 </div>
               </div>
             ))}
-          </div>
+          </section>
         )}
 
         {/* Awards */}
         {resume.awards && resume.awards.length > 0 && (
-          <div style={s.card}>
+          <section style={s.card}>
             <h2 style={s.sectionTitle}>Awards & Recognition</h2>
             {resume.awards.map((award, i) => (
               <div key={i} style={s.certEntry}>
@@ -452,12 +452,12 @@ export function ExecutiveTemplate({ resume, personalInfo }: TemplateProps) {
                 </div>
               </div>
             ))}
-          </div>
+          </section>
         )}
 
         {/* Languages */}
         {resume.languages && resume.languages.length > 0 && (
-          <div style={s.card}>
+          <section style={s.card}>
             <h2 style={s.sectionTitle}>Languages</h2>
             <div style={s.langGrid}>
               {resume.languages.map((lang, i) => (
@@ -467,12 +467,12 @@ export function ExecutiveTemplate({ resume, personalInfo }: TemplateProps) {
                 </div>
               ))}
             </div>
-          </div>
+          </section>
         )}
 
         {/* Volunteer */}
         {resume.volunteer && resume.volunteer.length > 0 && (
-          <div style={s.card}>
+          <section style={s.card}>
             <h2 style={s.sectionTitle}>Community Involvement</h2>
             {resume.volunteer.map((vol, i) => (
               <div key={i} style={s.volEntry}>
@@ -481,15 +481,15 @@ export function ExecutiveTemplate({ resume, personalInfo }: TemplateProps) {
                 <p style={s.volDesc}>{vol.description}</p>
               </div>
             ))}
-          </div>
+          </section>
         )}
 
         {/* Interests */}
         {resume.interests && resume.interests.length > 0 && (
-          <div style={s.card}>
+          <section style={s.card}>
             <h2 style={s.sectionTitle}>Interests</h2>
             <div style={s.interestsList}>{resume.interests.join('  /  ')}</div>
-          </div>
+          </section>
         )}
       </div>
     </div>

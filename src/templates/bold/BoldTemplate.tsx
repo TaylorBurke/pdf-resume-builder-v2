@@ -42,14 +42,12 @@ const s = {
     fontSize: 10.5,
     lineHeight: '1.5',
     color: colors.text,
-    backgroundColor: colors.body,
+    background: `linear-gradient(to right, ${colors.sidebar} 250px, ${colors.body} 250px)`,
   },
 
   // ── Sidebar ──────────────────────────────────────────────────────────
   sidebar: {
     width: 250,
-    minHeight: 1056,
-    backgroundColor: colors.sidebar,
     color: colors.sidebarText,
     padding: `${spacing.xl}px ${spacing.lg}px`,
     boxSizing: 'border-box' as const,
