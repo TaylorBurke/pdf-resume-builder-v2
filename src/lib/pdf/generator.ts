@@ -20,9 +20,6 @@ export async function renderResumeToHtml(
     throw new Error(`Unknown template: ${templateId}`)
   }
 
-  const pageMargin: Record<string, number> = { clean: 72, bold: 24, executive: 64 }
-  const margin = pageMargin[templateId] ?? 72
-
   const { renderToStaticMarkup } = await import('react-dom/server')
 
   const markup = renderToStaticMarkup(
@@ -36,8 +33,7 @@ export async function renderResumeToHtml(
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Resume - ${escapeHtml(personalInfo.fullName)}</title>
   <style>
-    @page { size: letter; margin: ${margin}px 0; }
-    @page :first { margin-top: 0; }
+    @page { size: letter; margin: 0; }
     * { box-sizing: border-box; }
     body {
       margin: 0;
@@ -48,9 +44,10 @@ export async function renderResumeToHtml(
       print-color-adjust: exact;
       -webkit-print-color-adjust: exact;
     }
-    section { break-inside: avoid; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+    section { break-inside: avoid; }
+    section[data-section="experience"] { break-inside: auto; }
+    section[data-section="experience"] > div { break-inside: avoid; }
     aside > div { break-inside: avoid; }
-    section > div, aside > div > div { break-inside: avoid; }
     h2 { break-after: avoid; }
   </style>
 </head>
