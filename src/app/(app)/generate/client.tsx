@@ -21,6 +21,7 @@ export default function GenerateClient() {
   const [coverLetters, setCoverLetters] = useState<CoverLetterSet | null>(null)
   const [coverLetterTab, setCoverLetterTab] = useState<'formal' | 'cultureFit' | 'technical'>('formal')
   const [isGeneratingCoverLetters, setIsGeneratingCoverLetters] = useState(false)
+  const [coverLetterError, setCoverLetterError] = useState(false)
 
   function handleAnalyze() {
     if (!company.trim() || !jobTitle.trim() || !jobText.trim()) return
@@ -36,11 +37,12 @@ export default function GenerateClient() {
 
         if (wantCoverLetters) {
           setIsGeneratingCoverLetters(true)
+          setCoverLetterError(false)
           try {
             const letters = await generateCoverLetters(jobText, company, jobTitle, result.analysis, result.parsedSections)
             setCoverLetters(letters)
           } catch {
-            // Cover letter generation failed — non-blocking, user can still generate resume
+            setCoverLetterError(true)
           } finally {
             setIsGeneratingCoverLetters(false)
           }
@@ -67,8 +69,8 @@ export default function GenerateClient() {
       try {
         const result = await generateResume(
           jobText, company, jobTitle, analysis, parsedSections,
-          coverLetters ?? undefined,
-          coverLetters ? toneMap[coverLetterTab] : undefined
+          (wantCoverLetters && coverLetters) ? coverLetters : undefined,
+          (wantCoverLetters && coverLetters) ? toneMap[coverLetterTab] : undefined
         )
         router.push(`/resume/${result.id}`)
       } catch (err) {
@@ -144,7 +146,10 @@ export default function GenerateClient() {
               <input
                 type="checkbox"
                 checked={wantCoverLetters}
-                onChange={(e) => setWantCoverLetters(e.target.checked)}
+                onChange={(e) => {
+                  setWantCoverLetters(e.target.checked)
+                  if (!e.target.checked) setCoverLetters(null)
+                }}
                 disabled={step === 'analyzing'}
                 className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               />
@@ -253,6 +258,12 @@ export default function GenerateClient() {
                 </div>
               )}
 
+              {coverLetterError && !coverLetters && (
+                <p className="text-sm text-amber-600 dark:text-amber-400">
+                  Cover letter generation failed. You can still generate your resume without cover letters.
+                </p>
+              )}
+
               {coverLetters && (
                 <>
                   <div className="flex border-b border-gray-200 dark:border-gray-700 mb-4">
@@ -294,7 +305,7 @@ export default function GenerateClient() {
             <button
               type="button"
               onClick={handleGenerate}
-              disabled={step === 'generating'}
+              disabled={step === 'generating' || isGeneratingCoverLetters}
               className="px-6 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {step === 'generating' ? 'Generating...' : 'Generate Resume'}
