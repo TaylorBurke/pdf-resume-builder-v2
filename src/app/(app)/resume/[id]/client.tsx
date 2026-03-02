@@ -82,8 +82,12 @@ export default function ResumeViewClient({ resume, personalInfo, initialCoverLet
   const [previewHtml, setPreviewHtml] = useState('')
   const [panelOpen, setPanelOpen] = useState(true)
   const [drawerTab, setDrawerTab] = useState<'edit' | 'customize' | 'coverLetter'>('edit')
-  const [coverLetterTab, setCoverLetterTab] = useState<'formal' | 'culture_fit' | 'technical'>('formal')
-  const [coverLetterTexts, setCoverLetterTexts] = useState<Record<string, string>>({})
+  const [coverLetterTab, setCoverLetterTab] = useState<CoverLetterTone>('formal')
+  const [coverLetterTexts, setCoverLetterTexts] = useState<Record<string, string>>(() => {
+    const texts: Record<string, string> = {}
+    for (const l of initialCoverLetters) texts[l.tone] = l.content
+    return texts
+  })
 
   const personalInfoKey = JSON.stringify(personalInfo)
   const resolvedPersonalInfo = useMemo(
@@ -107,18 +111,16 @@ export default function ResumeViewClient({ resume, personalInfo, initialCoverLet
     return () => { cancelled = true }
   }, [content, templateId, resolvedPersonalInfo])
 
-  useEffect(() => {
-    if (initialCoverLetters.length > 0) {
-      const texts: Record<string, string> = {}
-      for (const l of initialCoverLetters) texts[l.tone] = l.content
-      setCoverLetterTexts(texts)
-    }
-  }, [initialCoverLetters])
-
-  async function handleCoverLetterSave() {
-    const content = coverLetterTexts[coverLetterTab]
-    if (!content) return
-    await updateCoverLetter(resume.id, coverLetterTab as CoverLetterTone, content)
+  function handleCoverLetterSave() {
+    const letterContent = coverLetterTexts[coverLetterTab]
+    if (!letterContent) return
+    startTransition(async () => {
+      try {
+        await updateCoverLetter(resume.id, coverLetterTab, letterContent)
+      } catch {
+        // Save failed silently — content remains in local state
+      }
+    })
   }
 
   function handleTemplateChange(newTemplateId: string) {
@@ -286,8 +288,8 @@ export default function ResumeViewClient({ resume, personalInfo, initialCoverLet
                           onClick={() => setCoverLetterTab(key)}
                           className={`px-3 py-1.5 text-xs font-medium border-b-2 ${
                             coverLetterTab === key
-                              ? 'border-blue-600 text-blue-600'
-                              : 'border-transparent text-gray-500 hover:text-gray-700'
+                              ? 'border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400'
+                              : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                           }`}
                         >
                           {label}
@@ -306,9 +308,10 @@ export default function ResumeViewClient({ resume, personalInfo, initialCoverLet
                       <button
                         type="button"
                         onClick={handleCoverLetterSave}
-                        className="flex-1 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700"
+                        disabled={isPending}
+                        className="flex-1 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50"
                       >
-                        Save
+                        {isPending ? 'Saving...' : 'Save'}
                       </button>
                       <a
                         href={`/api/pdf/cover-letter/${resume.id}?tone=${coverLetterTab}`}
