@@ -80,9 +80,14 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
   }
 
   function handleContentSave(updatedContent: ResumeContent) {
+    const previousContent = content
     setContent(updatedContent)
     startTransition(async () => {
-      await updateResumeContent(resume.id, updatedContent)
+      try {
+        await updateResumeContent(resume.id, updatedContent)
+      } catch {
+        setContent(previousContent)
+      }
     })
   }
 

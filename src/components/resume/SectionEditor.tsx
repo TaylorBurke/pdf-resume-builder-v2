@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { ResumeContent } from '@/types'
 
 interface SectionEditorProps {
@@ -33,6 +33,12 @@ const SECTION_ORDER: SectionKey[] = [
 export default function SectionEditor({ content, onSave, isSaving }: SectionEditorProps) {
   const [openSection, setOpenSection] = useState<SectionKey | null>(null)
   const [editState, setEditState] = useState<ResumeContent>(content)
+
+  // Sync edit state when content changes externally (e.g. AI regeneration)
+  useEffect(() => {
+    setEditState(content)
+    setOpenSection(null)
+  }, [content])
 
   const presentSections = SECTION_ORDER.filter((key) => {
     const val = content[key]
