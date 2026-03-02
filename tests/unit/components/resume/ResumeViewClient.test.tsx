@@ -118,9 +118,8 @@ describe('ResumeViewClient', () => {
       expect(mockGetPreviewHtml).toHaveBeenCalledTimes(1)
     })
 
-    // Open drawer and switch to Customize tab to access template selector
-    await user.click(screen.getByRole('button', { name: /customize/i })) // Open drawer
-    await user.click(screen.getByRole('tab', { name: /customize/i })) // Switch to Customize tab
+    // Switch to Customize tab (panel is open by default)
+    await user.click(screen.getByRole('tab', { name: /customize/i }))
 
     // Click "Executive" template button
     await user.click(screen.getByRole('button', { name: /executive/i }))
@@ -168,64 +167,73 @@ describe('ResumeViewClient', () => {
     })
   })
 
-  describe('Overlay drawer', () => {
-    it('renders a drawer toggle button', () => {
+  describe('Side panel', () => {
+    it('renders panel open by default with Edit tab', () => {
       render(
         <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
       )
-      expect(screen.getByRole('button', { name: /customize/i })).toBeInTheDocument()
-    })
-
-    it('opens drawer when toggle is clicked', async () => {
-      const user = userEvent.setup()
-      render(
-        <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
-      )
-
-      const drawer = screen.getByTestId('controls-drawer')
-      expect(drawer).toHaveClass('translate-x-full')
-
-      await user.click(screen.getByRole('button', { name: /customize/i }))
-
-      expect(drawer).toHaveClass('translate-x-0')
-    })
-
-    it('closes drawer when close button is clicked', async () => {
-      const user = userEvent.setup()
-      render(
-        <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
-      )
-
-      await user.click(screen.getByRole('button', { name: /customize/i }))
-      const drawer = screen.getByTestId('controls-drawer')
-      expect(drawer).toHaveClass('translate-x-0')
-
-      await user.click(screen.getByRole('button', { name: /close/i }))
-      expect(drawer).toHaveClass('translate-x-full')
-    })
-
-    it('renders Edit and Customize tabs in drawer', async () => {
-      const user = userEvent.setup()
-      render(
-        <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
-      )
-      await user.click(screen.getByRole('button', { name: /customize/i }))
-      // Drawer is now open, both tabs visible
+      // Panel is open by default — tabs visible immediately
       expect(screen.getByRole('tab', { name: /edit/i })).toBeInTheDocument()
       expect(screen.getByRole('tab', { name: /customize/i })).toBeInTheDocument()
+      // Section editors visible in Edit tab
+      expect(screen.getByRole('button', { name: /summary/i })).toBeInTheDocument()
     })
 
-    it('shows section editors in Edit tab when drawer opens', async () => {
+    it('collapses panel when collapse button is clicked', async () => {
       const user = userEvent.setup()
       render(
         <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
       )
 
-      // Open drawer (defaults to Edit tab)
-      await user.click(screen.getByRole('button', { name: /customize/i }))
+      // Panel starts open
+      expect(screen.getByRole('tab', { name: /edit/i })).toBeInTheDocument()
 
-      // Section accordions should be visible (summary is in mockResume.resumeContent)
-      expect(screen.getByRole('button', { name: /summary/i })).toBeInTheDocument()
+      // Click collapse
+      await user.click(screen.getByRole('button', { name: /collapse panel/i }))
+
+      // Tabs should be gone, toolbar visible
+      expect(screen.queryByRole('tab', { name: /edit/i })).not.toBeInTheDocument()
+      expect(screen.getByTestId('collapsed-toolbar')).toBeInTheDocument()
+    })
+
+    it('expands panel when expand button is clicked', async () => {
+      const user = userEvent.setup()
+      render(
+        <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
+      )
+
+      // Collapse first
+      await user.click(screen.getByRole('button', { name: /collapse panel/i }))
+      expect(screen.queryByRole('tab', { name: /edit/i })).not.toBeInTheDocument()
+
+      // Expand
+      await user.click(screen.getByRole('button', { name: /expand panel/i }))
+      expect(screen.getByRole('tab', { name: /edit/i })).toBeInTheDocument()
+    })
+
+    it('switches templates from collapsed toolbar', async () => {
+      const user = userEvent.setup()
+      render(
+        <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
+      )
+
+      await waitFor(() => {
+        expect(mockGetPreviewHtml).toHaveBeenCalledTimes(1)
+      })
+
+      // Collapse panel
+      await user.click(screen.getByRole('button', { name: /collapse panel/i }))
+
+      // Click Bold template icon
+      await user.click(screen.getByRole('button', { name: /bold template/i }))
+
+      await waitFor(() => {
+        expect(mockGetPreviewHtml).toHaveBeenCalledWith(
+          mockResume.resumeContent,
+          mockPersonalInfo,
+          'bold'
+        )
+      })
     })
   })
 })

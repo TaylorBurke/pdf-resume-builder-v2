@@ -39,7 +39,7 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
   )
   const [isPending, startTransition] = useTransition()
   const [previewHtml, setPreviewHtml] = useState('')
-  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [panelOpen, setPanelOpen] = useState(true)
   const [drawerTab, setDrawerTab] = useState<'edit' | 'customize'>('edit')
 
   const personalInfoKey = JSON.stringify(personalInfo)
@@ -136,83 +136,163 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{resume.jobTitle}</h1>
           <p className="text-gray-600 dark:text-gray-400">{resume.company}</p>
         </div>
-        <div className="flex items-center gap-2">
-          <DownloadButton resumeId={resume.id} iconOnly />
-          <button
-            type="button"
-            onClick={() => setDrawerOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 shadow-sm transition-colors"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
-            </svg>
-            Customize
-          </button>
-        </div>
       </div>
 
       {resume.analysis && <AnalysisPanel analysis={resume.analysis} />}
 
-      <PagedPreview html={previewHtml} />
-
-      {drawerOpen && (
-        <div
-          className="fixed inset-0 bg-black/30 dark:bg-black/50 z-40"
-          onClick={() => setDrawerOpen(false)}
-        />
-      )}
-      <div
-        data-testid="controls-drawer"
-        className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white dark:bg-gray-900 shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
-          drawerOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
-      >
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
-          <div className="flex gap-1" role="tablist">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={drawerTab === 'edit'}
-              onClick={() => setDrawerTab('edit')}
-              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                drawerTab === 'edit'
-                  ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
-                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-              }`}
-            >
-              Edit
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={drawerTab === 'customize'}
-              onClick={() => setDrawerTab('customize')}
-              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                drawerTab === 'customize'
-                  ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
-                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-              }`}
-            >
-              Customize
-            </button>
-          </div>
-          <button
-            type="button"
-            onClick={() => setDrawerOpen(false)}
-            aria-label="Close"
-            className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 rounded-lg"
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+      <div className="flex gap-0">
+        {/* Preview area */}
+        <div className="flex-1 min-w-0 transition-all duration-300 ease-in-out">
+          <PagedPreview html={previewHtml} />
         </div>
-        <div className="p-4 space-y-6 overflow-y-auto h-[calc(100%-65px)]">
-          <DownloadButton resumeId={resume.id} />
-          {drawerTab === 'edit' ? (
-            <SectionEditor content={content} onSave={handleContentSave} isSaving={isPending} />
+
+        {/* Side panel */}
+        <div
+          data-testid="controls-panel"
+          className={`flex-shrink-0 transition-all duration-300 ease-in-out ${
+            panelOpen ? 'w-80' : 'w-12'
+          }`}
+        >
+          {panelOpen ? (
+            /* ── Expanded panel ── */
+            <div className="h-full border-l border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
+                <div className="flex gap-1" role="tablist">
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={drawerTab === 'edit'}
+                    onClick={() => setDrawerTab('edit')}
+                    className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                      drawerTab === 'edit'
+                        ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                        : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                    }`}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={drawerTab === 'customize'}
+                    onClick={() => setDrawerTab('customize')}
+                    className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                      drawerTab === 'customize'
+                        ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                        : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                    }`}
+                  >
+                    Customize
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setPanelOpen(false)}
+                  aria-label="Collapse panel"
+                  className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 rounded-lg"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+              <div className="p-4 space-y-6 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 200px)' }}>
+                <DownloadButton resumeId={resume.id} />
+                {drawerTab === 'edit' ? (
+                  <SectionEditor content={content} onSave={handleContentSave} isSaving={isPending} />
+                ) : (
+                  sidebarContent
+                )}
+              </div>
+            </div>
           ) : (
-            sidebarContent
+            /* ── Collapsed toolbar ── */
+            <div
+              data-testid="collapsed-toolbar"
+              className="h-full border-l border-gray-200 dark:border-gray-700 flex flex-col items-center py-3 gap-2 cursor-pointer"
+              onClick={(e) => {
+                if (e.target === e.currentTarget) setPanelOpen(true)
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => setPanelOpen(true)}
+                aria-label="Expand panel"
+                className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+
+              <a
+                href={`/api/pdf/${resume.id}`}
+                download
+                title="Download PDF"
+                className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </a>
+
+              <div className="w-6 border-t border-gray-300 dark:border-gray-600" />
+
+              {/* Template switcher icons */}
+              <button
+                type="button"
+                onClick={() => handleTemplateChange('clean')}
+                title="Clean template"
+                className={`p-2 rounded-lg transition-colors ${
+                  templateId === 'clean'
+                    ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950'
+                    : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                }`}
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <rect x="4" y="3" width="16" height="18" rx="1" />
+                  <line x1="7" y1="7" x2="17" y2="7" />
+                  <line x1="7" y1="11" x2="17" y2="11" />
+                  <line x1="7" y1="15" x2="13" y2="15" />
+                </svg>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleTemplateChange('bold')}
+                title="Bold template"
+                className={`p-2 rounded-lg transition-colors ${
+                  templateId === 'bold'
+                    ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950'
+                    : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                }`}
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <rect x="4" y="3" width="16" height="18" rx="1" />
+                  <rect x="4" y="3" width="6" height="18" rx="1" fill="currentColor" opacity="0.2" />
+                  <line x1="12" y1="7" x2="17" y2="7" />
+                  <line x1="12" y1="11" x2="17" y2="11" />
+                </svg>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleTemplateChange('executive')}
+                title="Executive template"
+                className={`p-2 rounded-lg transition-colors ${
+                  templateId === 'executive'
+                    ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950'
+                    : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                }`}
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <rect x="4" y="3" width="16" height="18" rx="1" />
+                  <rect x="4" y="3" width="16" height="6" rx="1" fill="currentColor" opacity="0.2" />
+                  <line x1="7" y1="13" x2="17" y2="13" />
+                  <line x1="7" y1="17" x2="13" y2="17" />
+                </svg>
+              </button>
+            </div>
           )}
         </div>
       </div>
