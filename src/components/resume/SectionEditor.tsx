@@ -66,6 +66,7 @@ export default function SectionEditor({ content, onSave, isSaving }: SectionEdit
         <div key={key} className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
           <button
             type="button"
+            aria-expanded={openSection === key}
             onClick={() => handleToggle(key)}
             className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
           >
@@ -336,7 +337,7 @@ function SimpleListEditor({
 }: {
   entries: Record<string, string | undefined>[]
   fields: string[]
-  onChange: (v: any[]) => void
+  onChange: (v: Record<string, string | undefined>[]) => void
 }) {
   function updateEntry(index: number, field: string, value: string) {
     const updated = entries.map((e, i) => (i === index ? { ...e, [field]: value } : e))
