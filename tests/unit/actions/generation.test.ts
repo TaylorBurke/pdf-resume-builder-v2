@@ -23,4 +23,19 @@ describe('Generation Actions', () => {
     const { regenerateResume } = await import('@/actions/generation')
     expect(typeof regenerateResume).toBe('function')
   })
+
+  it('exports generateCoverLetters function', async () => {
+    const { generateCoverLetters } = await import('@/actions/generation')
+    expect(typeof generateCoverLetters).toBe('function')
+  })
+
+  it('exports updateCoverLetter function', async () => {
+    const { updateCoverLetter } = await import('@/actions/generation')
+    expect(typeof updateCoverLetter).toBe('function')
+  })
+
+  it('exports getCoverLetters function', async () => {
+    const { getCoverLetters } = await import('@/actions/generation')
+    expect(typeof getCoverLetters).toBe('function')
+  })
 })

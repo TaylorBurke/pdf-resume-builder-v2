@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/lib/db/client'
-import { users, profileSections, resumes } from '@/lib/db/schema'
+import { users, profileSections, resumes, coverLetters } from '@/lib/db/schema'
 import { auth } from '@/lib/auth'
 import { eq, and } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
@@ -9,7 +9,8 @@ import { callOpenRouterJSON } from '@/lib/ai/openrouter'
 import { buildAnalysisPrompt } from '@/lib/ai/prompts/analyze-job'
 import { buildGenerationPrompt } from '@/lib/ai/prompts/generate-resume'
 import { buildRegenerationPrompt } from '@/lib/ai/prompts/regenerate-resume'
-import type { JobAnalysis, ResumeContent } from '@/types'
+import { buildCoverLetterPrompt } from '@/lib/ai/prompts/generate-cover-letters'
+import type { JobAnalysis, ResumeContent, CoverLetterSet, CoverLetterTone } from '@/types'
 
 async function getAuthenticatedUser() {
   const session = await auth()
@@ -51,14 +52,24 @@ export async function generateResume(
   company: string,
   jobTitle: string,
   analysis: JobAnalysis,
-  parsedSections: { sectionType: string; data: unknown }[]
+  parsedSections: { sectionType: string; data: unknown }[],
+  coverLetterTexts?: CoverLetterSet,
+  selectedTone?: CoverLetterTone
 ) {
   const user = await getAuthenticatedUser()
+
+  let prompt = buildGenerationPrompt({ analysis, profileSections: parsedSections })
+
+  if (coverLetterTexts && selectedTone) {
+    const toneKey = selectedTone === 'culture_fit' ? 'cultureFit' : selectedTone
+    const selectedLetter = coverLetterTexts[toneKey as keyof CoverLetterSet]
+    prompt += `\n\n## Cover Letter Context\nThe candidate is also submitting this cover letter. Ensure the resume complements rather than duplicates the cover letter's talking points:\n\n${selectedLetter}`
+  }
 
   const resumeContent = await callOpenRouterJSON<ResumeContent>({
     apiKey: user.openrouterApiKey!,
     model: user.preferredModel || 'anthropic/claude-sonnet-4',
-    messages: [{ role: 'user', content: buildGenerationPrompt({ analysis, profileSections: parsedSections }) }],
+    messages: [{ role: 'user', content: prompt }],
     maxTokens: 8192,
   })
 
@@ -74,10 +85,31 @@ export async function generateResume(
     analysis: JSON.stringify(analysis),
     resumeContent: JSON.stringify(resumeContent),
     templateId: 'clean',
+    selectedCoverLetterTone: selectedTone ?? null,
     feedbackHistory: '[]',
     createdAt: now,
     updatedAt: now,
   })
+
+  if (coverLetterTexts) {
+    const tones: { tone: string; content: string }[] = [
+      { tone: 'formal', content: coverLetterTexts.formal },
+      { tone: 'culture_fit', content: coverLetterTexts.cultureFit },
+      { tone: 'technical', content: coverLetterTexts.technical },
+    ]
+
+    for (const t of tones) {
+      await db.insert(coverLetters).values({
+        id: nanoid(),
+        userId: user.id,
+        resumeId: id,
+        tone: t.tone,
+        content: t.content,
+        createdAt: now,
+        updatedAt: now,
+      })
+    }
+  }
 
   return { id, resumeContent, analysis }
 }
@@ -171,4 +203,64 @@ export async function getResume(resumeId: string) {
     analysis: resume.analysis ? JSON.parse(resume.analysis) : null,
     feedbackHistory: JSON.parse(resume.feedbackHistory),
   }
+}
+
+export async function generateCoverLetters(
+  jobText: string,
+  company: string,
+  jobTitle: string,
+  analysis: JobAnalysis,
+  parsedSections: { sectionType: string; data: unknown }[]
+) {
+  const user = await getAuthenticatedUser()
+
+  const result = await callOpenRouterJSON<CoverLetterSet>({
+    apiKey: user.openrouterApiKey!,
+    model: user.preferredModel || 'anthropic/claude-sonnet-4',
+    messages: [
+      {
+        role: 'user',
+        content: buildCoverLetterPrompt({ jobText, company, jobTitle, analysis, profileSections: parsedSections }),
+      },
+    ],
+    temperature: 0.7,
+    maxTokens: 8192,
+  })
+
+  return result
+}
+
+export async function updateCoverLetter(resumeId: string, tone: CoverLetterTone, content: string) {
+  const session = await auth()
+  if (!session?.user?.id) throw new Error('Not authenticated')
+
+  await db
+    .update(coverLetters)
+    .set({ content, updatedAt: new Date().toISOString() })
+    .where(
+      and(
+        eq(coverLetters.resumeId, resumeId),
+        eq(coverLetters.tone, tone),
+        eq(coverLetters.userId, session.user.id)
+      )
+    )
+
+  return { tone, content }
+}
+
+export async function getCoverLetters(resumeId: string) {
+  const session = await auth()
+  if (!session?.user?.id) throw new Error('Not authenticated')
+
+  const letters = await db
+    .select()
+    .from(coverLetters)
+    .where(
+      and(
+        eq(coverLetters.resumeId, resumeId),
+        eq(coverLetters.userId, session.user.id)
+      )
+    )
+
+  return letters
 }
