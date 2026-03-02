@@ -58,7 +58,8 @@ export async function GET(
     const html = await renderResumeToHtml(resumeContent, personalInfo, templateId)
     const pdfBuffer = await generatePdf(html)
 
-    const filename = `Resume-${personalInfo.fullName.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`
+    const sanitize = (s: string) => s.replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '')
+    const filename = `${sanitize(personalInfo.fullName)}-${sanitize(resume.company)}-${sanitize(resume.jobTitle)}.pdf`
 
     return new Response(Buffer.from(pdfBuffer), {
       headers: {
