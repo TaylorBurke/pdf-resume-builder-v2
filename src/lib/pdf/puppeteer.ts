@@ -25,7 +25,6 @@ export async function generatePdf(html: string): Promise<Uint8Array> {
     const pdf = await page.pdf({
       format: 'Letter',
       printBackground: true,
-      margin: { top: 0, right: 0, bottom: 0, left: 0 },
     })
     await page.close()
     return pdf

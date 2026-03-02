@@ -33,7 +33,8 @@ export async function renderResumeToHtml(
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Resume - ${escapeHtml(personalInfo.fullName)}</title>
   <style>
-    @page { size: letter; margin: 0; }
+    @page { size: letter; margin: 48px 0 0 0; }
+    @page :first { margin-top: 0; }
     * { box-sizing: border-box; }
     body {
       margin: 0;
@@ -44,6 +45,7 @@ export async function renderResumeToHtml(
       print-color-adjust: exact;
       -webkit-print-color-adjust: exact;
     }
+    section { break-inside: avoid; }
     section > div, aside > div > div { break-inside: avoid; }
     h2 { break-after: avoid; }
   </style>
