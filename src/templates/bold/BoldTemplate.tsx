@@ -432,7 +432,7 @@ export function BoldTemplate({ resume, personalInfo }: TemplateProps) {
 
         {/* Experience */}
         {resume.experience && resume.experience.length > 0 && (
-          <section style={s.mainSection}>
+          <section style={s.mainSection} data-section="experience">
             <h2 style={s.mainSectionTitle}>Experience</h2>
             {resume.experience.map((exp, i) => (
               <div key={i} style={s.expEntry}>

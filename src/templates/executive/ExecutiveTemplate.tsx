@@ -339,7 +339,7 @@ export function ExecutiveTemplate({ resume, personalInfo }: TemplateProps) {
 
         {/* Experience */}
         {resume.experience && resume.experience.length > 0 && (
-          <section style={s.card}>
+          <section style={s.card} data-section="experience">
             <h2 style={s.sectionTitle}>Professional Experience</h2>
             {resume.experience.map((exp, i) => (
               <div key={i} style={s.expEntry}>

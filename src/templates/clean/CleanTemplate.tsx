@@ -257,7 +257,7 @@ export function CleanTemplate({ resume, personalInfo }: TemplateProps) {
 
       {/* ── Experience ────────────────────────────────────────────── */}
       {resume.experience && resume.experience.length > 0 && (
-        <section style={styles.section}>
+        <section style={styles.section} data-section="experience">
           <hr style={styles.sectionDivider} />
           <h2 style={styles.sectionTitle}>Experience</h2>
           {resume.experience.map((exp, i) => (
