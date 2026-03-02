@@ -236,7 +236,7 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
                 </button>
               </div>
               <div className="p-4 space-y-6 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 200px)' }}>
-                <DownloadButton resumeId={resume.id} />
+                <DownloadButton resumeId={resume.id} fullName={resolvedPersonalInfo.fullName} company={resume.company} jobTitle={resume.jobTitle} />
                 {drawerTab === 'edit' ? (
                   <SectionEditor content={content} onSave={handleContentSave} isSaving={isPending} />
                 ) : (
@@ -261,7 +261,7 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
                 </svg>
               </button>
 
-              <DownloadButton resumeId={resume.id} iconOnly />
+              <DownloadButton resumeId={resume.id} fullName={resolvedPersonalInfo.fullName} company={resume.company} jobTitle={resume.jobTitle} iconOnly />
 
               <div className="w-6 border-t border-gray-300 dark:border-gray-600" />
 
