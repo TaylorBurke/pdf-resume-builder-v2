@@ -6,7 +6,8 @@ import TemplateSelector from '@/components/resume/TemplateSelector'
 import FeedbackForm from '@/components/resume/FeedbackForm'
 import DownloadButton from '@/components/resume/DownloadButton'
 import AnalysisPanel from '@/components/resume/AnalysisPanel'
-import { regenerateResume, updateResumeTemplate } from '@/actions/generation'
+import SectionEditor from '@/components/resume/SectionEditor'
+import { regenerateResume, updateResumeTemplate, updateResumeContent } from '@/actions/generation'
 import { getPreviewHtml } from '@/actions/preview'
 import { TEMPLATES } from '@/templates'
 import type { TemplateId } from '@/templates'
@@ -75,6 +76,13 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
     startTransition(async () => {
       const result = await regenerateResume(resume.id, feedback)
       setContent(result.resumeContent)
+    })
+  }
+
+  function handleContentSave(updatedContent: ResumeContent) {
+    setContent(updatedContent)
+    startTransition(async () => {
+      await updateResumeContent(resume.id, updatedContent)
     })
   }
 
@@ -197,7 +205,7 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
         <div className="p-4 space-y-6 overflow-y-auto h-[calc(100%-65px)]">
           <DownloadButton resumeId={resume.id} />
           {drawerTab === 'edit' ? (
-            <p className="text-sm text-gray-500 dark:text-gray-400">Section editors coming soon...</p>
+            <SectionEditor content={content} onSave={handleContentSave} isSaving={isPending} />
           ) : (
             sidebarContent
           )}

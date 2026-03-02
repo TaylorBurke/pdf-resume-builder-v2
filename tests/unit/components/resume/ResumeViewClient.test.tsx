@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event'
 vi.mock('@/actions/generation', () => ({
   regenerateResume: vi.fn(),
   updateResumeTemplate: vi.fn(),
+  updateResumeContent: vi.fn(),
 }))
 
 // Mock preview server action to return HTML with identifiable template markers
@@ -212,6 +213,19 @@ describe('ResumeViewClient', () => {
       // Drawer is now open, both tabs visible
       expect(screen.getByRole('tab', { name: /edit/i })).toBeInTheDocument()
       expect(screen.getByRole('tab', { name: /customize/i })).toBeInTheDocument()
+    })
+
+    it('shows section editors in Edit tab when drawer opens', async () => {
+      const user = userEvent.setup()
+      render(
+        <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
+      )
+
+      // Open drawer (defaults to Edit tab)
+      await user.click(screen.getByRole('button', { name: /customize/i }))
+
+      // Section accordions should be visible (summary is in mockResume.resumeContent)
+      expect(screen.getByRole('button', { name: /summary/i })).toBeInTheDocument()
     })
   })
 })
