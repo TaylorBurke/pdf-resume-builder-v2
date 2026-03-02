@@ -32,6 +32,45 @@ function isValidTemplateId(id: string): id is TemplateId {
   return id in TEMPLATES
 }
 
+const TEMPLATE_ICONS: { id: TemplateId; title: string; icon: React.ReactNode }[] = [
+  {
+    id: 'clean',
+    title: 'Clean template',
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <rect x="4" y="3" width="16" height="18" rx="1" />
+        <line x1="7" y1="7" x2="17" y2="7" />
+        <line x1="7" y1="11" x2="17" y2="11" />
+        <line x1="7" y1="15" x2="13" y2="15" />
+      </svg>
+    ),
+  },
+  {
+    id: 'bold',
+    title: 'Bold template',
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <rect x="4" y="3" width="16" height="18" rx="1" />
+        <rect x="4" y="3" width="6" height="18" rx="1" fill="currentColor" opacity="0.2" />
+        <line x1="12" y1="7" x2="17" y2="7" />
+        <line x1="12" y1="11" x2="17" y2="11" />
+      </svg>
+    ),
+  },
+  {
+    id: 'executive',
+    title: 'Executive template',
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <rect x="4" y="3" width="16" height="18" rx="1" />
+        <rect x="4" y="3" width="16" height="6" rx="1" fill="currentColor" opacity="0.2" />
+        <line x1="7" y1="13" x2="17" y2="13" />
+        <line x1="7" y1="17" x2="13" y2="17" />
+      </svg>
+    ),
+  },
+]
+
 export default function ResumeViewClient({ resume, personalInfo }: ResumeViewClientProps) {
   const [content, setContent] = useState<ResumeContent | null>(resume.resumeContent)
   const [templateId, setTemplateId] = useState<TemplateId>(
@@ -209,10 +248,7 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
             /* ── Collapsed toolbar ── */
             <div
               data-testid="collapsed-toolbar"
-              className="h-full border-l border-gray-200 dark:border-gray-700 flex flex-col items-center py-3 gap-2 cursor-pointer"
-              onClick={(e) => {
-                if (e.target === e.currentTarget) setPanelOpen(true)
-              }}
+              className="h-full border-l border-gray-200 dark:border-gray-700 flex flex-col items-center py-3 gap-2"
             >
               <button
                 type="button"
@@ -225,73 +261,26 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
                 </svg>
               </button>
 
-              <a
-                href={`/api/pdf/${resume.id}`}
-                download
-                title="Download PDF"
-                className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </a>
+              <DownloadButton resumeId={resume.id} iconOnly />
 
               <div className="w-6 border-t border-gray-300 dark:border-gray-600" />
 
               {/* Template switcher icons */}
-              <button
-                type="button"
-                onClick={() => handleTemplateChange('clean')}
-                title="Clean template"
-                className={`p-2 rounded-lg transition-colors ${
-                  templateId === 'clean'
-                    ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950'
-                    : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
-                }`}
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <rect x="4" y="3" width="16" height="18" rx="1" />
-                  <line x1="7" y1="7" x2="17" y2="7" />
-                  <line x1="7" y1="11" x2="17" y2="11" />
-                  <line x1="7" y1="15" x2="13" y2="15" />
-                </svg>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleTemplateChange('bold')}
-                title="Bold template"
-                className={`p-2 rounded-lg transition-colors ${
-                  templateId === 'bold'
-                    ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950'
-                    : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
-                }`}
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <rect x="4" y="3" width="16" height="18" rx="1" />
-                  <rect x="4" y="3" width="6" height="18" rx="1" fill="currentColor" opacity="0.2" />
-                  <line x1="12" y1="7" x2="17" y2="7" />
-                  <line x1="12" y1="11" x2="17" y2="11" />
-                </svg>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleTemplateChange('executive')}
-                title="Executive template"
-                className={`p-2 rounded-lg transition-colors ${
-                  templateId === 'executive'
-                    ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950'
-                    : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
-                }`}
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <rect x="4" y="3" width="16" height="18" rx="1" />
-                  <rect x="4" y="3" width="16" height="6" rx="1" fill="currentColor" opacity="0.2" />
-                  <line x1="7" y1="13" x2="17" y2="13" />
-                  <line x1="7" y1="17" x2="13" y2="17" />
-                </svg>
-              </button>
+              {TEMPLATE_ICONS.map(({ id, title, icon }) => (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => handleTemplateChange(id)}
+                  title={title}
+                  className={`p-2 rounded-lg transition-colors ${
+                    templateId === id
+                      ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950'
+                      : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                  }`}
+                >
+                  {icon}
+                </button>
+              ))}
             </div>
           )}
         </div>
