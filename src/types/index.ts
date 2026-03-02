@@ -260,3 +260,13 @@ export interface ResumeContent {
   }[]
   interests?: string[]
 }
+
+// ── Cover Letters ────────────────────────────────────────────────────
+
+export type CoverLetterTone = 'formal' | 'culture_fit' | 'technical'
+
+export interface CoverLetterSet {
+  formal: string
+  cultureFit: string
+  technical: string
+}
