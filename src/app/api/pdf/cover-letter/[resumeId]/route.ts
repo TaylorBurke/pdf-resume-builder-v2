@@ -18,7 +18,12 @@ export async function GET(
   }
 
   const { resumeId } = await params
-  const tone = (request.nextUrl.searchParams.get('tone') ?? 'formal') as CoverLetterTone
+  const validTones: CoverLetterTone[] = ['formal', 'culture_fit', 'technical']
+  const rawTone = request.nextUrl.searchParams.get('tone') ?? 'formal'
+  if (!validTones.includes(rawTone as CoverLetterTone)) {
+    return NextResponse.json({ error: 'Invalid tone parameter' }, { status: 400 })
+  }
+  const tone = rawTone as CoverLetterTone
 
   try {
     const [letter] = await db
