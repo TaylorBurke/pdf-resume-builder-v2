@@ -10,26 +10,78 @@ interface PagedPreviewProps {
 }
 
 /**
- * Inject a CSS offset into the HTML so page N shows content starting at
- * N * PAGE_HEIGHT pixels. Uses inline style on <body> which overrides the
- * stylesheet's `body { margin: 0 }`. This is purely CSS-driven — no JS
- * scrollTo timing issues.
+ * Measure where natural page breaks occur by walking elements in a
+ * hidden iframe. Sections with break-inside:avoid stay whole.
+ * The experience section (data-section="experience") can break
+ * between entries but never mid-entry.
  */
-function getPageHtml(baseHtml: string, pageIndex: number): string {
-  if (pageIndex === 0) return baseHtml
-  const offset = pageIndex * PAGE_HEIGHT
-  return baseHtml.replace('<body>', `<body style="margin-top: -${offset}px;">`)
+function computeBreakOffsets(doc: Document): number[] {
+  const container = doc.querySelector('[data-page-root]') ?? doc.body.firstElementChild
+  if (!container) return [0]
+
+  const offsets: number[] = [0]
+  let currentPageBottom = PAGE_HEIGHT
+
+  const children = Array.from(container.children) as HTMLElement[]
+
+  for (const child of children) {
+    const top = child.offsetTop
+    const bottom = top + child.offsetHeight
+
+    if (bottom <= currentPageBottom) {
+      // Fits on current page — continue
+      continue
+    }
+
+    // Check if this is the Experience section that can split
+    if (child.getAttribute('data-section') === 'experience') {
+      // Walk entries inside Experience to find where to break
+      const entries = Array.from(child.children) as HTMLElement[]
+      for (const entry of entries) {
+        const entryTop = entry.offsetTop
+        const entryBottom = entryTop + entry.offsetHeight
+
+        if (entryBottom > currentPageBottom && entryTop < currentPageBottom) {
+          // This entry would be split — break before it
+          offsets.push(entryTop)
+          currentPageBottom = entryTop + PAGE_HEIGHT
+        } else if (entryTop >= currentPageBottom) {
+          // Entry starts beyond current page — break at the page boundary
+          offsets.push(entryTop)
+          currentPageBottom = entryTop + PAGE_HEIGHT
+        }
+        // Advance currentPageBottom if entry extends past it
+        while (entryBottom > currentPageBottom) {
+          // Entry is somehow taller than a page (shouldn't happen but be safe)
+          currentPageBottom += PAGE_HEIGHT
+        }
+      }
+    } else {
+      // Section doesn't fit and can't split — move it to next page
+      offsets.push(top)
+      currentPageBottom = top + PAGE_HEIGHT
+
+      // If section is taller than a page, advance past it
+      while (bottom > currentPageBottom) {
+        currentPageBottom += PAGE_HEIGHT
+      }
+    }
+  }
+
+  return offsets
 }
 
 export default function PagedPreview({ html }: PagedPreviewProps) {
   const measureRef = useRef<HTMLIFrameElement>(null)
-  const [pageCount, setPageCount] = useState(1)
+  const [breakOffsets, setBreakOffsets] = useState<number[]>([0])
 
   const handleMeasureLoad = useCallback(() => {
     const iframe = measureRef.current
-    if (!iframe?.contentDocument?.body) return
-    const height = iframe.contentDocument.body.scrollHeight
-    setPageCount(Math.max(1, Math.ceil(height / PAGE_HEIGHT)))
+    const doc = iframe?.contentDocument
+    if (!doc?.body) return
+
+    const offsets = computeBreakOffsets(doc)
+    setBreakOffsets(offsets)
   }, [])
 
   if (!html) {
@@ -40,12 +92,20 @@ export default function PagedPreview({ html }: PagedPreviewProps) {
     )
   }
 
+  // Add data-page-root to the body's first child for measurement
+  const measurableHtml = html.replace(
+    /<body>([\s\S]*?)<div /,
+    '<body>$1<div data-page-root '
+  )
+
+  const pageCount = breakOffsets.length
+
   return (
     <div data-testid="paged-preview">
       {/* Hidden measurement iframe */}
       <iframe
         ref={measureRef}
-        srcDoc={html}
+        srcDoc={measurableHtml}
         onLoad={handleMeasureLoad}
         aria-hidden="true"
         tabIndex={-1}
@@ -75,7 +135,7 @@ export default function PagedPreview({ html }: PagedPreviewProps) {
             >
               <iframe
                 data-testid={`page-${i + 1}`}
-                srcDoc={getPageHtml(html, i)}
+                srcDoc={getPageHtml(html, breakOffsets[i])}
                 scrolling="no"
                 style={{
                   width: PAGE_WIDTH,
@@ -93,4 +153,13 @@ export default function PagedPreview({ html }: PagedPreviewProps) {
       </div>
     </div>
   )
+}
+
+/**
+ * Offset the body content so the iframe shows content starting at the
+ * given pixel offset.
+ */
+function getPageHtml(baseHtml: string, offset: number): string {
+  if (offset === 0) return baseHtml
+  return baseHtml.replace('<body>', `<body style="margin-top: -${offset}px;">`)
 }
