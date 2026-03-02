@@ -88,6 +88,17 @@ export const resumes = sqliteTable('resumes', {
   templateId: text('template_id'),
   userEdits: text('user_edits'),
   feedbackHistory: text('feedback_history').notNull().default('[]'),
+  selectedCoverLetterTone: text('selected_cover_letter_tone'),
+  createdAt: text('created_at').notNull().default(sql`(CURRENT_TIMESTAMP)`),
+  updatedAt: text('updated_at').notNull().default(sql`(CURRENT_TIMESTAMP)`),
+})
+
+export const coverLetters = sqliteTable('cover_letters', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  resumeId: text('resume_id').notNull().references(() => resumes.id, { onDelete: 'cascade' }),
+  tone: text('tone').notNull(), // 'formal' | 'culture_fit' | 'technical'
+  content: text('content').notNull(),
   createdAt: text('created_at').notNull().default(sql`(CURRENT_TIMESTAMP)`),
   updatedAt: text('updated_at').notNull().default(sql`(CURRENT_TIMESTAMP)`),
 })
