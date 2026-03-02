@@ -115,7 +115,7 @@ function renderEditor(
           value={state.summary}
           onChange={(e) => update('summary', e.target.value)}
           rows={4}
-          className="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-gray-100"
+          className="w-full px-2 py-1.5 text-sm border border-gray-300/70 dark:border-gray-600/70 rounded-md bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm dark:text-gray-100"
         />
       )
     case 'experience':
@@ -163,7 +163,7 @@ function renderEditor(
   }
 }
 
-const inputClass = 'w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-gray-100'
+const inputClass = 'w-full px-2 py-1.5 text-sm border border-gray-300/70 dark:border-gray-600/70 rounded-md bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm dark:text-gray-100'
 const labelClass = 'block text-xs font-medium text-gray-500 dark:text-gray-400 mb-0.5'
 
 function ExperienceEditor({
