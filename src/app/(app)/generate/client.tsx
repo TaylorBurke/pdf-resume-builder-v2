@@ -2,8 +2,8 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { analyzeJob, generateResume } from '@/actions/generation'
-import type { JobAnalysis } from '@/types'
+import { analyzeJob, generateResume, generateCoverLetters } from '@/actions/generation'
+import type { JobAnalysis, CoverLetterSet, CoverLetterTone } from '@/types'
 
 type Step = 'input' | 'analyzing' | 'analysis' | 'generating'
 
@@ -17,6 +17,10 @@ export default function GenerateClient() {
   const [parsedSections, setParsedSections] = useState<{ sectionType: string; data: unknown }[]>([])
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
+  const [wantCoverLetters, setWantCoverLetters] = useState(false)
+  const [coverLetters, setCoverLetters] = useState<CoverLetterSet | null>(null)
+  const [coverLetterTab, setCoverLetterTab] = useState<'formal' | 'cultureFit' | 'technical'>('formal')
+  const [isGeneratingCoverLetters, setIsGeneratingCoverLetters] = useState(false)
 
   function handleAnalyze() {
     if (!company.trim() || !jobTitle.trim() || !jobText.trim()) return
@@ -29,6 +33,18 @@ export default function GenerateClient() {
         setAnalysis(result.analysis)
         setParsedSections(result.parsedSections)
         setStep('analysis')
+
+        if (wantCoverLetters) {
+          setIsGeneratingCoverLetters(true)
+          try {
+            const letters = await generateCoverLetters(jobText, company, jobTitle, result.analysis, result.parsedSections)
+            setCoverLetters(letters)
+          } catch {
+            // Cover letter generation failed — non-blocking, user can still generate resume
+          } finally {
+            setIsGeneratingCoverLetters(false)
+          }
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to analyze job posting')
         setStep('input')
@@ -41,9 +57,19 @@ export default function GenerateClient() {
     setError(null)
     setStep('generating')
 
+    const toneMap: Record<string, CoverLetterTone> = {
+      formal: 'formal',
+      cultureFit: 'culture_fit',
+      technical: 'technical',
+    }
+
     startTransition(async () => {
       try {
-        const result = await generateResume(jobText, company, jobTitle, analysis, parsedSections)
+        const result = await generateResume(
+          jobText, company, jobTitle, analysis, parsedSections,
+          coverLetters ?? undefined,
+          coverLetters ? toneMap[coverLetterTab] : undefined
+        )
         router.push(`/resume/${result.id}`)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to generate resume')
@@ -113,6 +139,17 @@ export default function GenerateClient() {
                 disabled={step === 'analyzing'}
               />
             </div>
+
+            <label className="flex items-center gap-2 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={wantCoverLetters}
+                onChange={(e) => setWantCoverLetters(e.target.checked)}
+                disabled={step === 'analyzing'}
+                className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-sm text-gray-700 dark:text-gray-300">Also generate cover letters</span>
+            </label>
 
             <div className="flex justify-end">
               <button
@@ -203,6 +240,55 @@ export default function GenerateClient() {
               <p className="text-sm text-gray-600 dark:text-gray-400">{analysis.recommendedAngle}</p>
             </div>
           </div>
+
+          {/* Cover Letters */}
+          {wantCoverLetters && (
+            <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Cover Letters</h2>
+
+              {isGeneratingCoverLetters && (
+                <div className="flex items-center justify-center gap-3 py-8 text-sm text-gray-600 dark:text-gray-400">
+                  <div className="h-5 w-5 border-2 border-blue-600 dark:border-blue-400 border-t-transparent rounded-full animate-spin" />
+                  Generating cover letters...
+                </div>
+              )}
+
+              {coverLetters && (
+                <>
+                  <div className="flex border-b border-gray-200 dark:border-gray-700 mb-4">
+                    {([
+                      ['formal', 'Direct & Formal'],
+                      ['cultureFit', 'Culture Fit'],
+                      ['technical', 'Technically Impressive'],
+                    ] as const).map(([key, label]) => (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() => setCoverLetterTab(key)}
+                        className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                          coverLetterTab === key
+                            ? 'border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400'
+                            : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                  <textarea
+                    value={coverLetters[coverLetterTab]}
+                    onChange={(e) =>
+                      setCoverLetters((prev) =>
+                        prev ? { ...prev, [coverLetterTab]: e.target.value } : prev
+                      )
+                    }
+                    rows={16}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100 resize-y leading-relaxed"
+                  />
+                </>
+              )}
+            </div>
+          )}
 
           <div className="flex justify-end">
             <button
