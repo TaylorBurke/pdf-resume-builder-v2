@@ -336,17 +336,17 @@ function ProjectsEditor({
   )
 }
 
-function SimpleListEditor({
+function SimpleListEditor<T extends Record<string, string | undefined>>({
   entries,
   fields,
   onChange,
 }: {
-  entries: Record<string, string | undefined>[]
+  entries: T[]
   fields: string[]
-  onChange: (v: Record<string, string | undefined>[]) => void
+  onChange: (v: T[]) => void
 }) {
   function updateEntry(index: number, field: string, value: string) {
-    const updated = entries.map((e, i) => (i === index ? { ...e, [field]: value } : e))
+    const updated = entries.map((e, i) => (i === index ? { ...e, [field]: value } : e)) as T[]
     onChange(updated)
   }
 

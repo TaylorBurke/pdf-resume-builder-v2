@@ -21,7 +21,7 @@ export default function DownloadButton({
   iconOnly = false,
 }: DownloadButtonProps) {
   const [state, setState] = useState<DownloadState>('idle')
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>()
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>(null)
 
   useEffect(() => {
     return () => {
