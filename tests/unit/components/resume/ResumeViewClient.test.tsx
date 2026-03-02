@@ -7,6 +7,7 @@ vi.mock('@/actions/generation', () => ({
   regenerateResume: vi.fn(),
   updateResumeTemplate: vi.fn(),
   updateResumeContent: vi.fn(),
+  updateCoverLetter: vi.fn(),
 }))
 
 // Mock preview server action to return HTML with identifiable template markers
@@ -52,6 +53,7 @@ const mockResume = {
   },
   analysis: mockAnalysis,
   feedbackHistory: [],
+  selectedCoverLetterTone: null,
 }
 
 const mockPersonalInfo = {
@@ -67,7 +69,7 @@ beforeEach(() => {
 describe('ResumeViewClient', () => {
   it('calls getPreviewHtml on mount with default template', async () => {
     render(
-      <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
+      <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} initialCoverLetters={[]} />
     )
 
     await waitFor(() => {
@@ -84,6 +86,7 @@ describe('ResumeViewClient', () => {
       <ResumeViewClient
         resume={{ ...mockResume, templateId: 'bold' }}
         personalInfo={mockPersonalInfo}
+        initialCoverLetters={[]}
       />
     )
 
@@ -100,7 +103,7 @@ describe('ResumeViewClient', () => {
     mockGetPreviewHtml.mockResolvedValue('<html><body><div>Test HTML</div></body></html>')
 
     render(
-      <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
+      <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} initialCoverLetters={[]} />
     )
 
     await waitFor(() => {
@@ -111,7 +114,7 @@ describe('ResumeViewClient', () => {
   it('calls getPreviewHtml again when template changes', async () => {
     const user = userEvent.setup()
     render(
-      <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
+      <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} initialCoverLetters={[]} />
     )
 
     await waitFor(() => {
@@ -136,7 +139,7 @@ describe('ResumeViewClient', () => {
   describe('Analysis panel', () => {
     it('renders collapsed analysis panel when analysis is present', () => {
       render(
-        <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
+        <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} initialCoverLetters={[]} />
       )
       expect(screen.getByRole('button', { name: /job analysis/i })).toBeInTheDocument()
       // Content is hidden when collapsed
@@ -146,7 +149,7 @@ describe('ResumeViewClient', () => {
     it('expands analysis panel on click', async () => {
       const user = userEvent.setup()
       render(
-        <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
+        <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} initialCoverLetters={[]} />
       )
 
       await user.click(screen.getByRole('button', { name: /job analysis/i }))
@@ -161,6 +164,7 @@ describe('ResumeViewClient', () => {
         <ResumeViewClient
           resume={{ ...mockResume, analysis: null }}
           personalInfo={mockPersonalInfo}
+          initialCoverLetters={[]}
         />
       )
       expect(screen.queryByRole('button', { name: /job analysis/i })).not.toBeInTheDocument()
@@ -170,7 +174,7 @@ describe('ResumeViewClient', () => {
   describe('Side panel', () => {
     it('renders panel open by default with Edit tab', () => {
       render(
-        <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
+        <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} initialCoverLetters={[]} />
       )
       // Panel is open by default — tabs visible immediately
       expect(screen.getByRole('tab', { name: /edit/i })).toBeInTheDocument()
@@ -182,7 +186,7 @@ describe('ResumeViewClient', () => {
     it('collapses panel when collapse button is clicked', async () => {
       const user = userEvent.setup()
       render(
-        <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
+        <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} initialCoverLetters={[]} />
       )
 
       // Panel starts open
@@ -199,7 +203,7 @@ describe('ResumeViewClient', () => {
     it('expands panel when expand button is clicked', async () => {
       const user = userEvent.setup()
       render(
-        <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
+        <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} initialCoverLetters={[]} />
       )
 
       // Collapse first
@@ -214,7 +218,7 @@ describe('ResumeViewClient', () => {
     it('switches templates from collapsed toolbar', async () => {
       const user = userEvent.setup()
       render(
-        <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} />
+        <ResumeViewClient resume={mockResume} personalInfo={mockPersonalInfo} initialCoverLetters={[]} />
       )
 
       await waitFor(() => {

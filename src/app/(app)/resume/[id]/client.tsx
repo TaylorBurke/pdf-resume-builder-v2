@@ -7,11 +7,11 @@ import FeedbackForm from '@/components/resume/FeedbackForm'
 import DownloadButton from '@/components/resume/DownloadButton'
 import AnalysisPanel from '@/components/resume/AnalysisPanel'
 import SectionEditor from '@/components/resume/SectionEditor'
-import { regenerateResume, updateResumeTemplate, updateResumeContent } from '@/actions/generation'
+import { regenerateResume, updateResumeTemplate, updateResumeContent, updateCoverLetter } from '@/actions/generation'
 import { getPreviewHtml } from '@/actions/preview'
 import { TEMPLATES } from '@/templates'
 import type { TemplateId } from '@/templates'
-import type { ResumeContent, PersonalInfo, JobAnalysis } from '@/types'
+import type { ResumeContent, PersonalInfo, JobAnalysis, CoverLetterTone } from '@/types'
 
 interface ResumeData {
   id: string
@@ -21,11 +21,13 @@ interface ResumeData {
   resumeContent: ResumeContent | null
   analysis: JobAnalysis | null
   feedbackHistory: { feedback: string; timestamp: string }[]
+  selectedCoverLetterTone: string | null
 }
 
 interface ResumeViewClientProps {
   resume: ResumeData
   personalInfo?: PersonalInfo
+  initialCoverLetters: { id: string; tone: string; content: string }[]
 }
 
 function isValidTemplateId(id: string): id is TemplateId {
@@ -71,7 +73,7 @@ const TEMPLATE_ICONS: { id: TemplateId; title: string; icon: React.ReactNode }[]
   },
 ]
 
-export default function ResumeViewClient({ resume, personalInfo }: ResumeViewClientProps) {
+export default function ResumeViewClient({ resume, personalInfo, initialCoverLetters }: ResumeViewClientProps) {
   const [content, setContent] = useState<ResumeContent | null>(resume.resumeContent)
   const [templateId, setTemplateId] = useState<TemplateId>(
     resume.templateId && isValidTemplateId(resume.templateId) ? resume.templateId : 'clean'
@@ -79,7 +81,9 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
   const [isPending, startTransition] = useTransition()
   const [previewHtml, setPreviewHtml] = useState('')
   const [panelOpen, setPanelOpen] = useState(true)
-  const [drawerTab, setDrawerTab] = useState<'edit' | 'customize'>('edit')
+  const [drawerTab, setDrawerTab] = useState<'edit' | 'customize' | 'coverLetter'>('edit')
+  const [coverLetterTab, setCoverLetterTab] = useState<'formal' | 'culture_fit' | 'technical'>('formal')
+  const [coverLetterTexts, setCoverLetterTexts] = useState<Record<string, string>>({})
 
   const personalInfoKey = JSON.stringify(personalInfo)
   const resolvedPersonalInfo = useMemo(
@@ -102,6 +106,20 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
     })()
     return () => { cancelled = true }
   }, [content, templateId, resolvedPersonalInfo])
+
+  useEffect(() => {
+    if (initialCoverLetters.length > 0) {
+      const texts: Record<string, string> = {}
+      for (const l of initialCoverLetters) texts[l.tone] = l.content
+      setCoverLetterTexts(texts)
+    }
+  }, [initialCoverLetters])
+
+  async function handleCoverLetterSave() {
+    const content = coverLetterTexts[coverLetterTab]
+    if (!content) return
+    await updateCoverLetter(resume.id, coverLetterTab as CoverLetterTone, content)
+  }
 
   function handleTemplateChange(newTemplateId: string) {
     if (!isValidTemplateId(newTemplateId)) return
@@ -223,6 +241,21 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
                   >
                     Customize
                   </button>
+                  {initialCoverLetters.length > 0 && (
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={drawerTab === 'coverLetter'}
+                      onClick={() => setDrawerTab('coverLetter')}
+                      className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                        drawerTab === 'coverLetter'
+                          ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                          : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                      }`}
+                    >
+                      Cover Letter
+                    </button>
+                  )}
                 </div>
                 <button
                   type="button"
@@ -239,6 +272,53 @@ export default function ResumeViewClient({ resume, personalInfo }: ResumeViewCli
                 <DownloadButton resumeId={resume.id} fullName={resolvedPersonalInfo.fullName} company={resume.company} jobTitle={resume.jobTitle} />
                 {drawerTab === 'edit' ? (
                   <SectionEditor content={content} onSave={handleContentSave} isSaving={isPending} />
+                ) : drawerTab === 'coverLetter' ? (
+                  <div className="space-y-3">
+                    <div className="flex border-b border-gray-200 dark:border-gray-700">
+                      {([
+                        ['formal', 'Formal'],
+                        ['culture_fit', 'Culture Fit'],
+                        ['technical', 'Technical'],
+                      ] as const).map(([key, label]) => (
+                        <button
+                          key={key}
+                          type="button"
+                          onClick={() => setCoverLetterTab(key)}
+                          className={`px-3 py-1.5 text-xs font-medium border-b-2 ${
+                            coverLetterTab === key
+                              ? 'border-blue-600 text-blue-600'
+                              : 'border-transparent text-gray-500 hover:text-gray-700'
+                          }`}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                    <textarea
+                      value={coverLetterTexts[coverLetterTab] ?? ''}
+                      onChange={(e) =>
+                        setCoverLetterTexts((prev) => ({ ...prev, [coverLetterTab]: e.target.value }))
+                      }
+                      rows={20}
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300/70 dark:border-gray-600/70 rounded-md bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm dark:text-gray-100 resize-y leading-relaxed"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={handleCoverLetterSave}
+                        className="flex-1 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700"
+                      >
+                        Save
+                      </button>
+                      <a
+                        href={`/api/pdf/cover-letter/${resume.id}?tone=${coverLetterTab}`}
+                        download
+                        className="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-900"
+                      >
+                        Download PDF
+                      </a>
+                    </div>
+                  </div>
                 ) : (
                   sidebarContent
                 )}
