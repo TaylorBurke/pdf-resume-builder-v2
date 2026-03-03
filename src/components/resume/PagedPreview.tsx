@@ -4,6 +4,7 @@ import { useRef, useState, useCallback } from 'react'
 
 const PAGE_WIDTH = 816
 const PAGE_HEIGHT = 1056
+const PAGE_MARGIN_TOP = 120
 
 interface PagedPreviewProps {
   html: string
@@ -161,21 +162,37 @@ export default function PagedPreview({ html }: PagedPreviewProps) {
 }
 
 /**
- * Create HTML for a single page by wrapping body content in a clipping
- * div. We use a wrapper <div> instead of styling <body> because
- * overflow:hidden on <body> propagates to the viewport and doesn't
- * actually clip child content.
+ * Create HTML for a single page by wrapping body content in clipping
+ * divs. We use wrapper <div>s instead of styling <body> because
+ * overflow:hidden on <body> propagates to the viewport per CSS spec.
+ *
+ * Page 1: single wrapper that clips at nextOffset.
+ * Page 2+: a spacer div for top margin, then a clipping container
+ * with an inner div that uses negative margin to offset content.
  */
 function getPageHtml(baseHtml: string, offset: number, nextOffset?: number): string {
   if (offset === 0 && nextOffset === undefined) return baseHtml
 
-  const styles: string[] = []
-  if (offset > 0) styles.push(`margin-top: -${offset}px`)
-  if (nextOffset !== undefined) {
-    styles.push(`height: ${nextOffset}px`, 'overflow: hidden')
+  if (offset === 0) {
+    // Page 1: just clip at the break point
+    return baseHtml
+      .replace('<body>', `<body><div style="height: ${nextOffset}px; overflow: hidden;">`)
+      .replace('</body>', '</div></body>')
   }
 
+  // Page 2+: spacer for top margin + clipping container + offset shift
+  const contentAreaHeight = PAGE_HEIGHT - PAGE_MARGIN_TOP
+  const innerStyles = [`margin-top: -${offset}px`]
+  if (nextOffset !== undefined) {
+    innerStyles.push(`height: ${nextOffset}px`, `overflow: hidden`)
+  }
+
+  const openTags =
+    `<div style="height: ${PAGE_MARGIN_TOP}px;"></div>` +
+    `<div style="height: ${contentAreaHeight}px; overflow: hidden;">` +
+    `<div style="${innerStyles.join('; ')}">`
+
   return baseHtml
-    .replace('<body>', `<body><div style="${styles.join('; ')}">`)
-    .replace('</body>', '</div></body>')
+    .replace('<body>', `<body>${openTags}`)
+    .replace('</body>', '</div></div></body>')
 }
