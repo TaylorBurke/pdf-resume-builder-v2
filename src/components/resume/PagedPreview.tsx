@@ -161,16 +161,21 @@ export default function PagedPreview({ html }: PagedPreviewProps) {
 }
 
 /**
- * Create HTML for a single page by offsetting the body and clipping
- * content so only the range [offset, nextOffset) is visible.
+ * Create HTML for a single page by wrapping body content in a clipping
+ * div. We use a wrapper <div> instead of styling <body> because
+ * overflow:hidden on <body> propagates to the viewport and doesn't
+ * actually clip child content.
  */
 function getPageHtml(baseHtml: string, offset: number, nextOffset?: number): string {
+  if (offset === 0 && nextOffset === undefined) return baseHtml
+
   const styles: string[] = []
   if (offset > 0) styles.push(`margin-top: -${offset}px`)
   if (nextOffset !== undefined) {
-    // Clip body height so content beyond the next break is hidden
     styles.push(`height: ${nextOffset}px`, 'overflow: hidden')
   }
-  if (styles.length === 0) return baseHtml
-  return baseHtml.replace('<body>', `<body style="${styles.join('; ')}">`)
+
+  return baseHtml
+    .replace('<body>', `<body><div style="${styles.join('; ')}">`)
+    .replace('</body>', '</div></body>')
 }
